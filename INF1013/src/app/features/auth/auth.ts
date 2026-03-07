@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule} from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,27 +23,27 @@ export interface LoginDTO {
  * ============================================================================
  * COMPOSANT AUTH - Authentification (Connexion/Inscription)
  * ============================================================================
- * 
+ *
  * COURS INF1013 - REACTIVE FORMS (Controller Driven Forms)
  * --------------------------------------------------------
  * "Angular utilise 2 approches pour gérer les formulaires:
  * Les Reactive Forms (RF) - Plus structurées, mise à l'échelle plus facile"
- * 
+ *
  * "La construction des RF débute dans le contrôleur.
  * On les appelle aussi Controller Driven Forms."
- * 
+ *
  * FORMGROUP ET FORMCONTROL:
  * "Les RF permettent un regroupement logique des formulaires avec FormGroup.
  * L'objectif est d'obtenir une structure de données cohérente (json)"
- * 
+ *
  * FORMBUILDER (Pattern Fabrique):
  * "Pour éviter les constructions lourdes des instances de chaque formControl,
  * on utilise un service de fabrique à l'aide du composant FormBuilder"
- * 
+ *
  * VALIDATION:
  * "Le formulaire a une variable d'état valid. Pour n'activer la soumission
  * que si le formulaire est valide: [disabled]='!studentForm.valid'"
- * 
+ *
  * @see Diapo: Les Reactive Forms, Validation des Formulaires RF
  * ============================================================================
  */
@@ -60,13 +60,14 @@ export interface LoginDTO {
     MatButtonModule,
     MatIconModule,
     MatSelectModule,
-    MatTabsModule
+    MatTabsModule,
+    FormsModule
   ],
   templateUrl: './auth.html',
   styleUrl: './auth.css'
 })
 export class Auth {
-  
+
   /**
    * Index de l'onglet actif (signal mutable)
    * COURS INF1013: "Les signaux modifiables offrent des fonctionnalités
@@ -77,7 +78,7 @@ export class Auth {
   /** États de chargement (signals) */
   enChargementConnexion = signal<boolean>(false);
   enChargementInscription = signal<boolean>(false);
-  
+
   /** Masquage des mots de passe (signals) */
   masquerMotDePasseConnexion = signal<boolean>(true);
   masquerMotDePasseInscription = signal<boolean>(true);
@@ -136,8 +137,8 @@ export class Auth {
   seConnecter(): void {
     if (!this.loginForm().valid()) {
       // Marquer touchés pour afficher les erreurs
-      this.loginForm.courriel().markTouched();
-      this.loginForm.motDePasse().markTouched();
+      this.loginForm['courriel']().markTouched();
+      this.loginForm['motDePasse']().markTouched();
       this.notification.afficherErreur('Veuillez remplir tous les champs correctement');
       return;
     }
@@ -147,10 +148,9 @@ export class Auth {
 
     this.authService.connexion(courriel, motDePasse).subscribe(utilisateur => {
       this.enChargementConnexion.set(false);
-      
+
       if (utilisateur) {
         this.notification.afficherBienvenue(utilisateur.prenom);
-        // Rediriger selon le rôle
         if (utilisateur.role === 'restaurateur') {
           this.router.navigate(['/restaurateur/gestion']);
         } else if (utilisateur.role === 'livreur') {
@@ -204,7 +204,7 @@ export class Auth {
     }).subscribe(utilisateur => {
       this.enChargementInscription.set(false);
       this.notification.afficherSucces(`Bienvenue ${utilisateur.prenom} ! Votre compte a été créé.`);
-      
+
       // Rediriger selon le rôle
       if (utilisateur.role === 'restaurateur') {
         this.router.navigate(['/restaurateur/gestion']);

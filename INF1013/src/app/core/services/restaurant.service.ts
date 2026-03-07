@@ -76,7 +76,7 @@ export class RestaurantService {
       imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=60',
       typeCuisine: 'Autre',
       note: 0,
-      tempsLivraison: 35,
+      tempsLivraison: "35",
       fraisLivraison: 0,
       commandeMinimum: 0,
     };

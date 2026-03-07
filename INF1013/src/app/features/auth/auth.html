@@ -1,25 +1,25 @@
-<!-- 
+<!--
   ============================================================================
   TEMPLATE AUTH - Formulaires d'authentification
   ============================================================================
-  
+
   COURS INF1013 - REACTIVE FORMS DANS LE TEMPLATE
   -----------------------------------------------
   "Le binding dans le template avec les champs correspondants:
   <form [formGroup]='profileForm'>
     <input formControlName='firstname'>
   </form>"
-  
+
   "La directive [formGroup] lie le formulaire au FormGroup du contrôleur"
   "La directive formControlName lie l'input au FormControl correspondant"
-  
+
   VALIDATION VISUELLE:
   "Pour binder les messages d'erreur aux templates:
   <div *ngIf='studentForm.get('fname').invalid && studentForm.get('fname').touched'>"
-  
+
   "Le formulaire a une variable d'état valid:
   <button [disabled]='!studentForm.valid'>"
-  
+
   @see Diapo: Les Reactive Forms, Validation des Formulaires RF
   ============================================================================
 -->
@@ -36,7 +36,7 @@
     <mat-card-content>
       <!-- COURS INF1013: Signal pour l'onglet actif avec () -->
       <mat-tab-group [selectedIndex]="ongletActif()" (selectedIndexChange)="ongletActif.set($event)" animationDuration="200ms">
-        
+
         <!-- ========== ONGLET CONNEXION ========== -->
         <mat-tab label="Connexion">
           <!--
@@ -51,11 +51,11 @@
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Email</mat-label>
-              <input matInput type="email" placeholder="votre@email.com" [formField]="loginForm.courriel" />
+              <input matInput type="email" placeholder="votre@email.com" [formField]="loginForm['courriel']" />
               <mat-icon matSuffix>email</mat-icon>
 
-              @if (loginForm.courriel().touched() && loginForm.courriel().invalid()) {
-                @for (err of loginForm.courriel().errors(); track err.key) {
+              @if (loginForm['courriel']().touched() && loginForm['courriel']().invalid()) {
+                @for (err of loginForm['courriel']().errors(); track err.key) {
                   <mat-error>{{ err.message }}</mat-error>
                 }
               }
@@ -66,14 +66,14 @@
               <input
                 matInput
                 [type]="masquerMotDePasseConnexion() ? 'password' : 'text'"
-                [formField]="loginForm.motDePasse"
+                [formField]="loginForm['motDePasse']"
               />
               <button mat-icon-button matSuffix type="button" (click)="basculerVisibilite('connexion')">
                 <mat-icon>{{ masquerMotDePasseConnexion() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
 
-              @if (loginForm.motDePasse().touched() && loginForm.motDePasse().invalid()) {
-                @for (err of loginForm.motDePasse().errors(); track err.key) {
+              @if (loginForm['motDePasse']().touched() && loginForm['motDePasse']().invalid()) {
+                @for (err of loginForm['motDePasse']().errors(); track err.key)  {
                   <mat-error>{{ err.message }}</mat-error>
                 }
               }
@@ -95,9 +95,6 @@
                 Se connecter
               </button>
             }
-
-            <!-- Démo: JSON live du modèle (comme dans le cours) -->
-            <pre class="json-live">{{ loginModel() | json }}</pre>
           </form>
 
           <!-- Info pour tester -->
@@ -110,18 +107,18 @@
 
         <!-- ========== ONGLET INSCRIPTION ========== -->
         <mat-tab label="Inscription">
-          <!-- 
+          <!--
             COURS INF1013 - REACTIVE FORMS avec FormGroup:
             "L'objectif est d'obtenir une structure de données cohérente (json)
             contenue dans l'instance value de FormGroup"
           -->
           <form [formGroup]="formulaireInscription" (ngSubmit)="sInscrire()" class="auth-form">
-            
+
             <!-- Prénom avec validation -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Prénom *</mat-label>
-              <input matInput 
-                     type="text" 
+              <input matInput
+                     type="text"
                      formControlName="prenom"
                      placeholder="Jean">
               <mat-icon matSuffix>person</mat-icon>
@@ -133,8 +130,8 @@
             <!-- Nom avec validation -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Nom *</mat-label>
-              <input matInput 
-                     type="text" 
+              <input matInput
+                     type="text"
                      formControlName="nom"
                      placeholder="Dupont">
               <mat-icon matSuffix>person_outline</mat-icon>
@@ -146,8 +143,8 @@
             <!-- Email avec validation -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Email *</mat-label>
-              <input matInput 
-                     type="email" 
+              <input matInput
+                     type="email"
                      formControlName="courriel"
                      placeholder="votre@email.com">
               <mat-icon matSuffix>email</mat-icon>
@@ -159,8 +156,8 @@
             <!-- Téléphone -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Téléphone</mat-label>
-              <input matInput 
-                     type="tel" 
+              <input matInput
+                     type="tel"
                      formControlName="telephone"
                      placeholder="514-555-1234">
               <mat-icon matSuffix>phone</mat-icon>
@@ -169,8 +166,8 @@
             <!-- Adresse -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Adresse de livraison</mat-label>
-              <input matInput 
-                     type="text" 
+              <input matInput
+                     type="text"
                      formControlName="adresse"
                      placeholder="123 rue Exemple, Montréal">
               <mat-icon matSuffix>location_on</mat-icon>
@@ -190,8 +187,8 @@
             <!-- Mot de passe avec validation -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Mot de passe *</mat-label>
-              <input matInput 
-                     [type]="masquerMotDePasseInscription() ? 'password' : 'text'" 
+              <input matInput
+                     [type]="masquerMotDePasseInscription() ? 'password' : 'text'"
                      formControlName="motDePasse">
               <button mat-icon-button matSuffix type="button" (click)="basculerVisibilite('inscription')">
                 <mat-icon>{{ masquerMotDePasseInscription() ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -205,8 +202,8 @@
             <!-- Confirmer mot de passe -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Confirmer le mot de passe *</mat-label>
-              <input matInput 
-                     [type]="masquerConfirmation() ? 'password' : 'text'" 
+              <input matInput
+                     [type]="masquerConfirmation() ? 'password' : 'text'"
                      formControlName="confirmationMotDePasse">
               <button mat-icon-button matSuffix type="button" (click)="basculerVisibilite('confirmation')">
                 <mat-icon>{{ masquerConfirmation() ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -219,18 +216,18 @@
             <!-- Bouton inscription -->
             <!-- COURS INF1013: "[disabled]='!studentForm.valid'" -->
             @if (enChargementInscription()) {
-              <button mat-raised-button 
-                      color="primary" 
-                      type="submit" 
+              <button mat-raised-button
+                      color="primary"
+                      type="submit"
                       class="full-width submit-btn"
                       disabled>
                 <mat-icon class="spin">sync</mat-icon>
                 Création...
               </button>
             } @else {
-              <button mat-raised-button 
-                      color="primary" 
-                      type="submit" 
+              <button mat-raised-button
+                      color="primary"
+                      type="submit"
                       class="full-width submit-btn"
                       [disabled]="formulaireInscription.invalid">
                 Créer mon compte
