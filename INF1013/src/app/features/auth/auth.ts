@@ -19,41 +19,14 @@ export interface LoginDTO {
   motDePasse: string;
 }
 
-/**
- * ============================================================================
- * COMPOSANT AUTH - Authentification (Connexion/Inscription)
- * ============================================================================
- *
- * COURS INF1013 - REACTIVE FORMS (Controller Driven Forms)
- * --------------------------------------------------------
- * "Angular utilise 2 approches pour gérer les formulaires:
- * Les Reactive Forms (RF) - Plus structurées, mise à l'échelle plus facile"
- *
- * "La construction des RF débute dans le contrôleur.
- * On les appelle aussi Controller Driven Forms."
- *
- * FORMGROUP ET FORMCONTROL:
- * "Les RF permettent un regroupement logique des formulaires avec FormGroup.
- * L'objectif est d'obtenir une structure de données cohérente (json)"
- *
- * FORMBUILDER (Pattern Fabrique):
- * "Pour éviter les constructions lourdes des instances de chaque formControl,
- * on utilise un service de fabrique à l'aide du composant FormBuilder"
- *
- * VALIDATION:
- * "Le formulaire a une variable d'état valid. Pour n'activer la soumission
- * que si le formulaire est valide: [disabled]='!studentForm.valid'"
- *
- * @see Diapo: Les Reactive Forms, Validation des Formulaires RF
- * ============================================================================
- */
+// Authentification (Connexion/Inscription)
 @Component({
   selector: 'app-auth',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,  // COURS INF1013: Module pour Reactive Forms
-    FormFieldDirective,   // COURS INF1013: Signal Forms (pattern) - [formField]
+    ReactiveFormsModule,
+    FormFieldDirective,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -68,30 +41,16 @@ export interface LoginDTO {
 })
 export class Auth {
 
-  /**
-   * Index de l'onglet actif (signal mutable)
-   * COURS INF1013: "Les signaux modifiables offrent des fonctionnalités
-   * permettant de mettre à jour directement leurs valeurs"
-   */
   ongletActif = signal<number>(0);
 
-  /** États de chargement (signals) */
   enChargementConnexion = signal<boolean>(false);
   enChargementInscription = signal<boolean>(false);
 
-  /** Masquage des mots de passe (signals) */
   masquerMotDePasseConnexion = signal<boolean>(true);
   masquerMotDePasseInscription = signal<boolean>(true);
   masquerConfirmation = signal<boolean>(true);
 
-  /**
-   * Formulaire de connexion (Signal Forms - pattern)
-   *
-   * COURS INF1013 - SIGNAL FORMS:
-   * "Créer un model signal mutable typé avec votre DTO"
-   * "Créer un formulaire signal à partir du modèle de signal"
-   * "Validation centralisée" + "UI réactif"
-   */
+  // Formulaire de connexion
   loginModel = signal<LoginDTO>({ courriel: '', motDePasse: '' });
   loginForm = form(this.loginModel, (s) => [
     required(s.courriel, { message: 'Email requis' }),
@@ -101,15 +60,12 @@ export class Auth {
   ]);
 
   /**
-   * Formulaire d'inscription (Reactive Form avec validation)
-   * COURS INF1013 - VALIDATION:
-   * "fname: ['', [Validators.required, Validators.minLength(2)]]"
+   * Formulaire d'inscription
    */
   formulaireInscription: FormGroup;
 
   /**
-   * Constructeur avec injection de dépendances
-   * COURS INF1013: "Le composant FormBuilder est injecté"
+   * Constructeur
    */
   constructor(
     private readonly fb: FormBuilder,
@@ -117,7 +73,6 @@ export class Auth {
     private readonly router: Router,
     private readonly notification: NotificationService
   ) {
-    // COURS INF1013: Création des FormGroups avec FormBuilder (RF)
     this.formulaireInscription = this.fb.group({
       prenom: ['', [Validators.required, Validators.minLength(2)]],
       nom: ['', [Validators.required, Validators.minLength(2)]],
@@ -130,10 +85,6 @@ export class Auth {
     });
   }
 
-  /**
-   * Soumettre le formulaire de connexion
-   * COURS INF1013: "[disabled]='!form.valid'" pour n'activer que si valide
-   */
   seConnecter(): void {
     if (!this.loginForm().valid()) {
       // Marquer touchés pour afficher les erreurs
@@ -164,12 +115,7 @@ export class Auth {
     });
   }
 
-  /**
-   * Soumettre le formulaire d'inscription
-   * COURS INF1013 - Validation:
-   * "Le formulaire a une variable d'état valid qui détermine
-   * l'état de validité du formulaire à chaque modification"
-   */
+
   sInscrire(): void {
     if (this.formulaireInscription.invalid) {
       this.formulaireInscription.markAllAsTouched();
@@ -179,7 +125,7 @@ export class Auth {
 
     const valeurs = this.formulaireInscription.value;
 
-    // Vérifier que les mots de passe correspondent
+    // Vérifier si les mots de passe correspondent
     if (valeurs.motDePasse !== valeurs.confirmationMotDePasse) {
       this.notification.afficherErreur('Les mots de passe ne correspondent pas');
       return;
@@ -205,7 +151,7 @@ export class Auth {
       this.enChargementInscription.set(false);
       this.notification.afficherSucces(`Bienvenue ${utilisateur.prenom} ! Votre compte a été créé.`);
 
-      // Rediriger selon le rôle
+      // Redirection
       if (utilisateur.role === 'restaurateur') {
         this.router.navigate(['/restaurateur/gestion']);
       } else if (utilisateur.role === 'livreur') {
@@ -216,10 +162,7 @@ export class Auth {
     });
   }
 
-  /**
-   * Bascule la visibilité du mot de passe
-   * COURS INF1013: "this.count.update(oldValue => !oldValue)"
-   */
+
   basculerVisibilite(champ: 'connexion' | 'inscription' | 'confirmation'): void {
     switch (champ) {
       case 'connexion':

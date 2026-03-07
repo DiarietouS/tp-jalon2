@@ -16,7 +16,6 @@ export class RestaurantService {
   constructor(private readonly http: HttpClient) {}
 
   loadRestaurants(): Observable<RestaurantModel[]> {
-    // 1) Priorité au localStorage (persistance pour la démo)
     const cache = this.lireDepuisStorage();
     if (cache.length) {
       this.restaurants = cache;
@@ -24,7 +23,6 @@ export class RestaurantService {
       return of(this.restaurants);
     }
 
-    // 2) Sinon charger depuis le JSON et persister
     return this.http.get<any[]>(this.url).pipe(
       map(data => (data ?? []).map(r => this.convertir(r))),
       tap(restaurants => {
@@ -36,11 +34,8 @@ export class RestaurantService {
     );
   }
 
-  /**
-   * Met à jour les informations d'un restaurant
-   * @param idRestaurant - ID du restaurant
-   * @param donnees - Données à mettre à jour
-   */
+  // Mise à jour des informations d'un restaurant
+
   mettreAJourRestaurant(idRestaurant: number, donnees: Partial<RestaurantModel>): Observable<RestaurantModel | undefined> {
     const index = this.restaurants.findIndex(r => r.id === idRestaurant);
     if (index !== -1) {
@@ -52,10 +47,7 @@ export class RestaurantService {
     return of(undefined);
   }
 
-  /**
-   * Crée un restaurant associé à un restaurateur.
-   * Utilisé à l'inscription pour respecter "les restaurateurs peuvent créer un compte et exposer leurs plats".
-   */
+  // Créer un restaurant associé à un restaurateur
   creerRestaurantPourProprietaire(donnees: {
     idProprietaire: number;
     courriel: string;
@@ -104,7 +96,7 @@ export class RestaurantService {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(liste));
     } catch {
-      // ignore
+
     }
   }
 
@@ -112,9 +104,8 @@ export class RestaurantService {
     return Math.max(...this.restaurants.map(r => r.id), 0) + 1;
   }
 
-  /**
-   * Convertit les données JSON (anglais) vers le modèle français
-   */
+  //Convertit les données JSON (anglais) vers le modèle français
+
   private convertir(data: any): RestaurantModel {
     return {
       id: data.id,

@@ -1,32 +1,8 @@
-<!--
-  ============================================================================
-  TEMPLATE AUTH - Formulaires d'authentification
-  ============================================================================
 
-  COURS INF1013 - REACTIVE FORMS DANS LE TEMPLATE
-  -----------------------------------------------
-  "Le binding dans le template avec les champs correspondants:
-  <form [formGroup]='profileForm'>
-    <input formControlName='firstname'>
-  </form>"
-
-  "La directive [formGroup] lie le formulaire au FormGroup du contrôleur"
-  "La directive formControlName lie l'input au FormControl correspondant"
-
-  VALIDATION VISUELLE:
-  "Pour binder les messages d'erreur aux templates:
-  <div *ngIf='studentForm.get('fname').invalid && studentForm.get('fname').touched'>"
-
-  "Le formulaire a une variable d'état valid:
-  <button [disabled]='!studentForm.valid'>"
-
-  @see Diapo: Les Reactive Forms, Validation des Formulaires RF
-  ============================================================================
--->
+  //Formulaires d'authentification
 
 <div class="auth-container">
   <mat-card class="auth-card">
-    <!-- Logo / Titre -->
     <mat-card-header>
       <mat-icon mat-card-avatar class="logo-icon">restaurant</mat-icon>
       <mat-card-title>Bienvenue</mat-card-title>
@@ -34,19 +10,10 @@
     </mat-card-header>
 
     <mat-card-content>
-      <!-- COURS INF1013: Signal pour l'onglet actif avec () -->
       <mat-tab-group [selectedIndex]="ongletActif()" (selectedIndexChange)="ongletActif.set($event)" animationDuration="200ms">
 
-        <!-- ========== ONGLET CONNEXION ========== -->
+        // Connexion
         <mat-tab label="Connexion">
-          <!--
-            COURS INF1013 - SIGNAL FORMS (pattern)
-            -------------------------------------
-            - DTO typé + model signal: loginModel
-            - form(model) => formFields: loginForm.courriel / loginForm.motDePasse
-            - Validation via loginForm.<champ>().errors()
-            - Bouton: [disabled]="!loginForm().valid()"
-          -->
           <form novalidate (ngSubmit)="seConnecter()" class="auth-form">
 
             <mat-form-field appearance="outline" class="full-width">
@@ -97,7 +64,7 @@
             }
           </form>
 
-          <!-- Info pour tester -->
+          // Infos pour tester
           <div class="test-info">
             <p><strong>Comptes de test :</strong></p>
             <p>Client : client&#64;test.com / test123</p>
@@ -105,16 +72,12 @@
           </div>
         </mat-tab>
 
-        <!-- ========== ONGLET INSCRIPTION ========== -->
+        //Inscription
         <mat-tab label="Inscription">
-          <!--
-            COURS INF1013 - REACTIVE FORMS avec FormGroup:
-            "L'objectif est d'obtenir une structure de données cohérente (json)
-            contenue dans l'instance value de FormGroup"
-          -->
+
           <form [formGroup]="formulaireInscription" (ngSubmit)="sInscrire()" class="auth-form">
 
-            <!-- Prénom avec validation -->
+            // Donnees personnels avec validation
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Prénom *</mat-label>
               <input matInput
@@ -127,7 +90,6 @@
               }
             </mat-form-field>
 
-            <!-- Nom avec validation -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Nom *</mat-label>
               <input matInput
@@ -140,7 +102,6 @@
               }
             </mat-form-field>
 
-            <!-- Email avec validation -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Email *</mat-label>
               <input matInput
@@ -153,7 +114,7 @@
               }
             </mat-form-field>
 
-            <!-- Téléphone -->
+            //Téléphone
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Téléphone</mat-label>
               <input matInput
@@ -163,7 +124,7 @@
               <mat-icon matSuffix>phone</mat-icon>
             </mat-form-field>
 
-            <!-- Adresse -->
+            // adresse
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Adresse de livraison</mat-label>
               <input matInput
@@ -173,7 +134,7 @@
               <mat-icon matSuffix>location_on</mat-icon>
             </mat-form-field>
 
-            <!-- Type de compte -->
+            //Type de compte
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Type de compte</mat-label>
               <mat-select formControlName="role">
@@ -184,7 +145,7 @@
               <mat-icon matSuffix>badge</mat-icon>
             </mat-form-field>
 
-            <!-- Mot de passe avec validation -->
+            // Mot de passe avec validation
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Mot de passe *</mat-label>
               <input matInput
@@ -199,7 +160,7 @@
               }
             </mat-form-field>
 
-            <!-- Confirmer mot de passe -->
+            // Confirmation mot de passe
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Confirmer le mot de passe *</mat-label>
               <input matInput
@@ -213,8 +174,7 @@
               }
             </mat-form-field>
 
-            <!-- Bouton inscription -->
-            <!-- COURS INF1013: "[disabled]='!studentForm.valid'" -->
+            //Bouton inscription
             @if (enChargementInscription()) {
               <button mat-raised-button
                       color="primary"
