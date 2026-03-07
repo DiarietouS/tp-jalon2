@@ -1,0 +1,143 @@
+/* Page du panier */
+.panier {
+  padding-bottom: 100px;
+}
+
+.panier h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+/* Panier vide */
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-cart mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.empty-cart p {
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+/* Info restaurant */
+.restaurant-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--mat-sys-surface-container);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  color: var(--mat-sys-on-surface);
+}
+
+.restaurant-info mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+/* Liste des items */
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Item du panier */
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--mat-sys-surface);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-info h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-price {
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Contrôles de quantité */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quantity {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.item-total {
+  font-weight: 600;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Récapitulatif */
+.cart-summary {
+  background: var(--mat-sys-surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.summary-row.total {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  margin-top: 8px;
+  padding-top: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+
+/* Bouton commander */
+.checkout-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+}

@@ -1,0 +1,25 @@
+[
+  {
+    "id": 101,
+    "customer": "Ahmed",
+    "address": "30 Rue courval, Trois-Rivières",
+    "phone": "526-947-987",
+    "status": "PENDING",
+    "createdAt": "2026-02-10T17:00:08",
+    "lines": [
+      { "dishnum": 1, "label": "Pizza", "quantity": 1, "unitPrice": 12.5 },
+      { "dishnum": 2, "label": "Burger", "quantity": 2, "unitPrice": 9.0 }
+    ]
+  },
+  {
+    "id": 102,
+    "customer": "Sarra",
+    "address": "88 Rue forge, Trois-Rivières",
+    "phone": "585-783-487",
+    "status": "IN_PROGRESS",
+    "createdAt": "2026-02-10T10:25:47",
+    "lines": [
+      { "dishnum": 3, "label": "Tacos", "quantity": 1, "unitPrice": 8.0 }
+    ]
+  }
+]

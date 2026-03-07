@@ -1,0 +1,289 @@
+<div class="gestion-container">
+  <h1 class="titre">Mon restaurant</h1>
+
+  <!-- COURS INF1013: Two-way binding avec signal - [prop]="signal()" et (event)="signal.set($event)" -->
+  <mat-tab-group [selectedIndex]="ongletActif()" (selectedIndexChange)="ongletActif.set($event)" class="onglets">
+    <!-- Onglet Mes Plats -->
+    <mat-tab label="Mes plats">
+      <div class="contenu-onglet">
+        <!-- Formulaire d'ajout de plat -->
+        <mat-card class="carte-formulaire">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>add_circle</mat-icon> Ajouter un plat
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="formulairePlat" (ngSubmit)="ajouterPlat()" class="formulaire-plat">
+              <mat-form-field appearance="outline">
+                <mat-label>Nom du plat</mat-label>
+                <input matInput formControlName="nom" placeholder="Ex: Pizza Margherita">
+                @if (formulairePlat.get('nom')?.hasError('required') && formulairePlat.get('nom')?.touched) {
+                  <mat-error>Le nom est requis</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="description" rows="2" placeholder="Description du plat"></textarea>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Prix ($)</mat-label>
+                <input matInput type="number" formControlName="prix" placeholder="0.00">
+                @if (formulairePlat.get('prix')?.hasError('required') && formulairePlat.get('prix')?.touched) {
+                  <mat-error>Le prix est requis</mat-error>
+                }
+                @if (formulairePlat.get('prix')?.hasError('min')) {
+                  <mat-error>Le prix doit être positif</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Catégorie</mat-label>
+                <mat-select formControlName="categorie">
+                  @for (cat of categories; track cat) {
+                    <mat-option [value]="cat">{{ cat }}</mat-option>
+                  }
+                </mat-select>
+                @if (formulairePlat.get('categorie')?.hasError('required') && formulairePlat.get('categorie')?.touched) {
+                  <mat-error>La catégorie est requise</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>URL de l'image</mat-label>
+                <input matInput formControlName="imageUrl" placeholder="https://...">
+              </mat-form-field>
+
+              <mat-slide-toggle formControlName="disponible" color="primary">
+                Disponible
+              </mat-slide-toggle>
+
+              <button mat-raised-button color="primary" type="submit" class="bouton-ajouter">
+                <mat-icon>add</mat-icon> Ajouter le plat
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- COURS INF1013: Signal lu avec () dans le template -->
+        <!-- Message d'erreur -->
+        @if (messageErreur(); as erreur) {
+          <div class="message-erreur">
+            <mat-icon>error</mat-icon>
+            {{ erreur }}
+          </div>
+        }
+
+        <!-- COURS INF1013: Signal boolean lu avec () -->
+        <!-- Chargement -->
+        @if (enChargement()) {
+          <div class="chargement">
+            <mat-icon>hourglass_empty</mat-icon>
+            <span>Chargement...</span>
+          </div>
+        }
+
+        <!-- Liste des plats -->
+        @if (!enChargement() && plats.length > 0) {
+          <div class="liste-plats">
+            <h2>Mes plats ({{ plats.length }})</h2>
+            @for (plat of plats; track plat.id) {
+              <mat-card class="carte-plat">
+                <div class="plat-contenu">
+                  @if (plat.imageUrl) {
+                    <img [src]="plat.imageUrl" [alt]="plat.nom" class="plat-image">
+                  }
+                  <div class="plat-infos">
+                    <h3>{{ plat.nom }}</h3>
+                    <p class="plat-description">{{ plat.description }}</p>
+                    <div class="plat-meta">
+                      <span class="plat-prix">{{ plat.prix | currency:'CAD':'symbol':'1.2-2':'fr-CA' }}</span>
+                      <span class="plat-categorie">{{ plat.categorie }}</span>
+                      <span class="plat-disponibilite" [class.non-disponible]="!plat.disponible">
+                        {{ plat.disponible ? 'Disponible' : 'Non disponible' }}
+                      </span>
+                    </div>
+                  </div>
+                  <button mat-icon-button color="warn" (click)="supprimerPlat(plat.id)" class="bouton-supprimer">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </mat-card>
+            }
+          </div>
+        }
+
+        <!-- Message si aucun plat -->
+        @if (!enChargement() && plats.length === 0) {
+          <div class="message-vide">
+            <mat-icon>restaurant_menu</mat-icon>
+            <p>Aucun plat dans votre menu. Ajoutez votre premier plat!</p>
+          </div>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Infos Restaurant -->
+    <mat-tab label="Mon restaurant">
+      <div class="contenu-onglet">
+        @if (enChargement()) {
+          <div class="chargement">
+            <mat-icon>hourglass_empty</mat-icon>
+            <span>Chargement...</span>
+          </div>
+        }
+
+        @if (!enChargement() && restaurant) {
+          <mat-card class="carte-restaurant">
+            <!-- COURS INF1013: Signal boolean lu avec () -->
+            <!-- Mode affichage -->
+            @if (!modeEditionRestaurant()) {
+              <!-- Image de couverture -->
+              @if (restaurant.imageUrl) {
+                <img mat-card-image [src]="restaurant.imageUrl" [alt]="restaurant.nom" class="restaurant-image">
+              }
+
+              <mat-card-header>
+                <mat-card-title>
+                  <mat-icon>store</mat-icon> {{ restaurant.nom }}
+                </mat-card-title>
+                <mat-card-subtitle>{{ restaurant.typeCuisine }}</mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <mat-divider></mat-divider>
+
+                <div class="infos-restaurant">
+                  <div class="info-ligne">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{ restaurant.adresse }}</span>
+                  </div>
+
+                  <div class="info-ligne">
+                    <mat-icon>phone</mat-icon>
+                    <span>{{ restaurant.telephone }}</span>
+                  </div>
+
+                  <div class="info-ligne">
+                    <mat-icon>email</mat-icon>
+                    <span>{{ restaurant.courriel }}</span>
+                  </div>
+
+                  <mat-divider></mat-divider>
+
+                  <div class="info-ligne">
+                    <mat-icon>schedule</mat-icon>
+                    <span>Temps de livraison: {{ restaurant.tempsLivraison }} min</span>
+                  </div>
+
+                  <div class="info-ligne">
+                    <mat-icon>local_shipping</mat-icon>
+                    <span>Frais de livraison: {{ restaurant.fraisLivraison | currency:'CAD':'symbol':'1.2-2':'fr-CA' }}</span>
+                  </div>
+
+                  <div class="info-ligne">
+                    <mat-icon>star</mat-icon>
+                    <span>Note: {{ restaurant.note }}/5</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions>
+                <button mat-raised-button color="primary" (click)="activerEditionRestaurant()">
+                  <mat-icon>edit</mat-icon> Modifier
+                </button>
+              </mat-card-actions>
+            }
+
+            <!-- COURS INF1013: Signal boolean - condition inverse avec () -->
+            <!-- Mode édition -->
+            @if (modeEditionRestaurant()) {
+              <mat-card-header>
+                <mat-card-title>
+                  <mat-icon>edit</mat-icon> Modifier le restaurant
+                </mat-card-title>
+              </mat-card-header>
+
+              <mat-card-content>
+                <form [formGroup]="formulaireRestaurant" class="formulaire-restaurant">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Nom du restaurant</mat-label>
+                    <input matInput formControlName="nom">
+                    @if (formulaireRestaurant.get('nom')?.hasError('required') && formulaireRestaurant.get('nom')?.touched) {
+                      <mat-error>Le nom est requis</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Adresse</mat-label>
+                    <input matInput formControlName="adresse">
+                    @if (formulaireRestaurant.get('adresse')?.hasError('required') && formulaireRestaurant.get('adresse')?.touched) {
+                      <mat-error>L'adresse est requise</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Téléphone</mat-label>
+                    <input matInput formControlName="telephone">
+                    @if (formulaireRestaurant.get('telephone')?.hasError('required') && formulaireRestaurant.get('telephone')?.touched) {
+                      <mat-error>Le téléphone est requis</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Courriel</mat-label>
+                    <input matInput formControlName="courriel" type="email">
+                    @if (formulaireRestaurant.get('courriel')?.hasError('required') && formulaireRestaurant.get('courriel')?.touched) {
+                      <mat-error>Le courriel est requis</mat-error>
+                    }
+                    @if (formulaireRestaurant.get('courriel')?.hasError('email')) {
+                      <mat-error>Format de courriel invalide</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Type de cuisine</mat-label>
+                    <input matInput formControlName="typeCuisine">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>URL de l'image</mat-label>
+                    <input matInput formControlName="imageUrl">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Temps de livraison (min)</mat-label>
+                    <input matInput type="number" formControlName="tempsLivraison">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Frais de livraison ($)</mat-label>
+                    <input matInput type="number" formControlName="fraisLivraison">
+                  </mat-form-field>
+                </form>
+              </mat-card-content>
+
+              <mat-card-actions class="edit-actions">
+                <button mat-button (click)="annulerEditionRestaurant()">
+                  <mat-icon>close</mat-icon> Annuler
+                </button>
+                <button mat-raised-button color="primary" (click)="sauvegarderRestaurant()">
+                  <mat-icon>save</mat-icon> Sauvegarder
+                </button>
+              </mat-card-actions>
+            }
+          </mat-card>
+        }
+
+        @if (!enChargement() && !restaurant) {
+          <div class="message-vide">
+            <mat-icon>store</mat-icon>
+            <p>Aucun restaurant trouvé.</p>
+          </div>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

@@ -1,0 +1,53 @@
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.location {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.location-label {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.location-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.address {
+  font-weight: 600;
+}
+
+.chevron {
+  opacity: 0.9;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.search-bar {
+  padding: 12px 16px 8px;
+  background: var(--mat-sys-surface, #fff);
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.search-field {
+  width: 100%;
+}

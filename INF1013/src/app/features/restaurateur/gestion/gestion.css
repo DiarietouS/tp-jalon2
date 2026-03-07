@@ -1,0 +1,253 @@
+.gestion-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 80px;
+}
+
+.titre {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #333;
+  font-weight: 500;
+}
+
+.onglets {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.contenu-onglet {
+  padding: 20px 0;
+}
+
+/* === Formulaire plat === */
+.carte-formulaire {
+  margin-bottom: 24px;
+}
+
+.carte-formulaire mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+
+.formulaire-plat {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.formulaire-plat mat-form-field {
+  width: 100%;
+}
+
+.formulaire-plat mat-slide-toggle {
+  margin: 8px 0;
+}
+
+.bouton-ajouter {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.bouton-ajouter mat-icon {
+  margin-right: 8px;
+}
+
+/* === Liste des plats === */
+.liste-plats h2 {
+  margin: 0 0 16px 0;
+  color: #555;
+  font-size: 16px;
+}
+
+.carte-plat {
+  margin-bottom: 12px;
+}
+
+.plat-contenu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px;
+}
+
+.plat-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.plat-infos {
+  flex: 1;
+}
+
+.plat-infos h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.plat-description {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.plat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.plat-prix {
+  font-weight: 600;
+  color: #4CAF50;
+}
+
+.plat-categorie {
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.plat-disponibilite {
+  color: #4CAF50;
+}
+
+.plat-disponibilite.non-disponible {
+  color: #f44336;
+}
+
+.bouton-supprimer {
+  flex-shrink: 0;
+}
+
+/* === Carte restaurant === */
+.carte-restaurant {
+  overflow: hidden;
+}
+
+.restaurant-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.carte-restaurant mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+}
+
+.carte-restaurant mat-card-content mat-divider {
+  margin: 16px 0;
+}
+
+.infos-restaurant {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-ligne {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #555;
+}
+
+.info-ligne mat-icon {
+  color: #666;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* === États === */
+.chargement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px;
+  color: #666;
+}
+
+.message-erreur {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+}
+
+.message-vide {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.message-vide mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}
+
+.message-vide p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .gestion-container {
+    padding: 12px;
+  }
+
+  .plat-contenu {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .plat-image {
+    width: 100%;
+    height: 150px;
+  }
+
+  .bouton-supprimer {
+    align-self: flex-end;
+  }
+}
+
+/* === Formulaire restaurant === */
+.formulaire-restaurant {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.formulaire-restaurant mat-form-field {
+  width: 100%;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px;
+}

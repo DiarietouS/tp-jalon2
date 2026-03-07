@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "clientId": 1,
+    "restaurantId": 1,
+    "restaurantName": "Campiglia",
+    "items": [
+      {
+        "dishId": 1,
+        "dishName": "Pizza Margherita",
+        "quantity": 1,
+        "unitPrice": 14.99
+      },
+      {
+        "dishId": 3,
+        "dishName": "Pâtes Carbonara",
+        "quantity": 1,
+        "unitPrice": 15.99
+      }
+    ],
+    "status": "delivered",
+    "subtotal": 30.98,
+    "deliveryFee": 3.99,
+    "total": 34.97,
+    "deliveryAddress": "123 Rue Principale, Trois-Rivières",
+    "phone": "819-555-1111",
+    "createdAt": "2026-02-18T18:30:00",
+    "estimatedDelivery": "2026-02-18T19:05:00"
+  },
+  {
+    "id": 2,
+    "clientId": 1,
+    "restaurantId": 3,
+    "restaurantName": "Sushi Bar",
+    "items": [
+      {
+        "dishId": 7,
+        "dishName": "Sushi Combo Deluxe",
+        "quantity": 2,
+        "unitPrice": 24.99
+      }
+    ],
+    "status": "delivering",
+    "subtotal": 49.98,
+    "deliveryFee": 4.99,
+    "total": 54.97,
+    "deliveryAddress": "123 Rue Principale, Trois-Rivières",
+    "phone": "819-555-1111",
+    "createdAt": "2026-02-19T12:15:00",
+    "estimatedDelivery": "2026-02-19T12:55:00"
+  },
+  {
+    "id": 3,
+    "clientId": 4,
+    "restaurantId": 2,
+    "restaurantName": "Le petit food",
+    "items": [
+      {
+        "dishId": 4,
+        "dishName": "Burger Classic",
+        "quantity": 2,
+        "unitPrice": 12.99
+      },
+      {
+        "dishId": 6,
+        "dishName": "Frites Maison",
+        "quantity": 2,
+        "unitPrice": 4.99
+      }
+    ],
+    "status": "preparing",
+    "subtotal": 35.96,
+    "deliveryFee": 2.99,
+    "total": 38.95,
+    "deliveryAddress": "456 Avenue du Campus, Trois-Rivières",
+    "phone": "819-555-2222",
+    "createdAt": "2026-02-19T12:30:00",
+    "estimatedDelivery": "2026-02-19T13:00:00"
+  }
+]

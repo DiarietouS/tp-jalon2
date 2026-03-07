@@ -1,0 +1,105 @@
+<!-- 
+  ============================================================================
+  TEMPLATE PANIER
+  ============================================================================
+  
+  COURS INF1013 - CONSOMMATION DE SIGNALS DANS LE TEMPLATE
+  --------------------------------------------------------
+  "La valeur d'un signal se lit en appelant sa fonction d'accès (getter)"
+  
+  Donc on utilise:
+  - servicePanier.panier() au lieu de servicePanier.panier
+  - servicePanier.sousTotal() au lieu de servicePanier.sousTotal
+  - servicePanier.total() au lieu de servicePanier.total
+  
+  STRUCTURES DE CONTRÔLE @if/@for:
+  "Les nouvelles versions de Angular utilisent @if/@else et @for"
+  
+  @see Diapo: C'est quoi un signal, @for, @if
+  ============================================================================
+-->
+
+<!-- Page du panier -->
+<section class="panier">
+  <h1>Mon Panier</h1>
+
+  <!-- Panier vide -->
+  <!-- COURS INF1013: Lecture du signal panier avec () -->
+  @if (!servicePanier.panier()) {
+    <div class="empty-cart">
+      <mat-icon>shopping_cart</mat-icon>
+      <p>Votre panier est vide</p>
+      <a mat-raised-button color="primary" routerLink="/restaurants">
+        Découvrir les restaurants
+      </a>
+    </div>
+  }
+
+  <!-- Panier avec articles -->
+  @if (servicePanier.panier(); as panier) {
+    <!-- Nom du restaurant -->
+    <div class="restaurant-info">
+      <mat-icon>restaurant</mat-icon>
+      <span>{{ panier.nomRestaurant }}</span>
+    </div>
+
+    <!-- Liste des articles -->
+    <!-- COURS INF1013: "@for (student of students(); track student)" -->
+    <div class="cart-items">
+      @for (article of panier.articles; track article.plat.id) {
+        <div class="cart-item">
+          <img [src]="article.plat.imageUrl" [alt]="article.plat.nom" class="item-image">
+          
+          <div class="item-info">
+            <h3>{{ article.plat.nom }}</h3>
+            <span class="item-price">{{ article.plat.prix | number:'1.2-2' }} $</span>
+          </div>
+          
+          <!-- Contrôles de quantité -->
+          <!-- COURS INF1013: "(click)='displayMsg()'" - binding événement -->
+          <div class="quantity-controls">
+            <button mat-icon-button (click)="diminuerQuantite(article)">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="quantity">{{ article.quantite }}</span>
+            <button mat-icon-button (click)="augmenterQuantite(article)">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          
+          <!-- Prix total de l'article -->
+          <span class="item-total">
+            {{ article.plat.prix * article.quantite | number:'1.2-2' }} $
+          </span>
+          
+          <!-- Bouton supprimer -->
+          <button mat-icon-button color="warn" (click)="supprimerArticle(article)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Récapitulatif -->
+    <!-- COURS INF1013: Lecture des signals computed avec () -->
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Sous-total</span>
+        <span>{{ servicePanier.sousTotal() | number:'1.2-2' }} $</span>
+      </div>
+      <div class="summary-row">
+        <span>Frais de livraison</span>
+        <span>{{ panier.fraisLivraison | number:'1.2-2' }} $</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span>{{ servicePanier.total() | number:'1.2-2' }} $</span>
+      </div>
+    </div>
+
+    <!-- Bouton commander -->
+    <button mat-raised-button color="primary" class="checkout-btn" (click)="commander()">
+      Commander - {{ servicePanier.total() | number:'1.2-2' }} $
+    </button>
+  }
+</section>

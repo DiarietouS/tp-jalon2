@@ -1,0 +1,191 @@
+<div class="commandes-container">
+  <!-- ========== VUE CLIENT ========== -->
+  @if (!estRestaurateur) {
+    <h1>Mes commandes</h1>
+
+    @if (enChargement) {
+      <div class="loading">
+        <mat-icon class="spin">sync</mat-icon>
+        <p>Chargement...</p>
+      </div>
+    } @else if (commandes.length === 0) {
+      <!-- Aucune commande -->
+      <div class="empty-state">
+        <mat-icon>receipt_long</mat-icon>
+        <h2>Aucune commande</h2>
+        <p>Vous n'avez pas encore passé de commande.</p>
+        <button mat-raised-button color="primary" routerLink="/restaurants">
+          <mat-icon>restaurant</mat-icon>
+          Découvrir les restaurants
+        </button>
+      </div>
+    } @else {
+      <!-- Liste des commandes -->
+      <div class="orders-list">
+        @for (commande of commandes; track commande.id) {
+          <mat-card class="order-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>store</mat-icon>
+              <mat-card-title>{{ commande.nomRestaurant }}</mat-card-title>
+              <!-- COURS INF1013: Pipe personnalisé {{ valeur | dateRelative }} -->
+              <mat-card-subtitle>{{ commande.creeLe | dateRelative }}</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <!-- Statut -->
+              <div class="status-row">
+                <span class="status-chip status-{{ commande.statut }}">
+                  {{ getLibelleStatut(commande.statut) }}
+                </span>
+                <span class="order-id">Commande #{{ commande.id }}</span>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <!-- Articles -->
+              <div class="items-list">
+                @for (article of commande.articles; track article.idPlat) {
+                  <div class="item-row">
+                    <span class="quantity">{{ article.quantite }}x</span>
+                    <span class="name">{{ article.nomPlat }}</span>
+                    <!-- COURS INF1013: Pipe personnalisé {{ valeur | prix }} -->
+                    <span class="price">{{ article.prixUnitaire * article.quantite | prix }}</span>
+                  </div>
+                }
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <!-- Total -->
+              <div class="total-section">
+                <div class="total-row">
+                  <span>Sous-total</span>
+                  <span>{{ commande.sousTotal | prix }}</span>
+                </div>
+                <div class="total-row">
+                  <span>Livraison</span>
+                  <span>{{ commande.fraisLivraison | prix }}</span>
+                </div>
+                <div class="total-row total-final">
+                  <span>Total</span>
+                  <span>{{ commande.total | prix }}</span>
+                </div>
+              </div>
+
+              <!-- Adresse de livraison -->
+              <div class="delivery-address">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ commande.adresseLivraison }}</span>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button mat-button color="primary" [routerLink]="['/restaurant', commande.idRestaurant]">
+                <mat-icon>replay</mat-icon>
+                Commander à nouveau
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+
+  <!-- ========== VUE RESTAURATEUR ========== -->
+  @if (estRestaurateur) {
+    <h1>
+      <mat-icon>store</mat-icon>
+      Commandes du restaurant
+    </h1>
+
+    @if (enChargement) {
+      <div class="loading">
+        <mat-icon class="spin">sync</mat-icon>
+        <p>Chargement des commandes...</p>
+      </div>
+    }
+
+    @if (!enChargement && messageErreur) {
+      <div class="error-msg">
+        <mat-icon>error</mat-icon>
+        {{ messageErreur }}
+      </div>
+    }
+
+    @if (!enChargement && !messageErreur) {
+      @if (commandesRestaurateur.length === 0) {
+        <div class="empty-state">
+          <mat-icon>inventory_2</mat-icon>
+          <h2>Aucune commande</h2>
+          <p>Les nouvelles commandes apparaîtront ici.</p>
+        </div>
+      } @else {
+        <div class="orders-list">
+          @for (commande of commandesRestaurateur; track commande.id) {
+            <mat-card class="order-card">
+              <mat-card-header>
+                <mat-icon mat-card-avatar>receipt_long</mat-icon>
+                <mat-card-title>Commande #{{ commande.id }}</mat-card-title>
+                <mat-card-subtitle>{{ commande.creeLe | dateRelative }}</mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="status-row">
+                  <span class="status-chip status-{{ commande.statut }}">
+                    {{ getLibelleStatut(commande.statut) }}
+                  </span>
+                  <span class="order-id">Client #{{ commande.idClient }}</span>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="items-list">
+                  @for (article of commande.articles; track article.idPlat) {
+                    <div class="item-row">
+                      <span class="quantity">{{ article.quantite }}x</span>
+                      <span class="name">{{ article.nomPlat }}</span>
+                      <span class="price">{{ article.prixUnitaire * article.quantite | prix }}</span>
+                    </div>
+                  }
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="delivery-address">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ commande.adresseLivraison }}</span>
+                </div>
+
+                <div class="total-section">
+                  <div class="total-row total-final">
+                    <span>Total</span>
+                    <span>{{ commande.total | prix }}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions class="actions">
+                <button mat-stroked-button (click)="changerStatutCommande(commande.id, 'confirmee')">
+                  <mat-icon>check</mat-icon>
+                  Confirmer
+                </button>
+                <button mat-stroked-button (click)="changerStatutCommande(commande.id, 'enPreparation')">
+                  <mat-icon>restaurant</mat-icon>
+                  Préparer
+                </button>
+                <button mat-stroked-button (click)="changerStatutCommande(commande.id, 'prete')">
+                  <mat-icon>inventory_2</mat-icon>
+                  Prête
+                </button>
+                <button mat-raised-button color="primary" (click)="changerStatutCommande(commande.id, 'enLivraison')">
+                  <mat-icon>local_shipping</mat-icon>
+                  Remise au livreur
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      }
+    }
+  }
+</div>

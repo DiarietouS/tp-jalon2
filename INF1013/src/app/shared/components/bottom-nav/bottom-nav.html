@@ -1,0 +1,15 @@
+<!-- Navigation du bas (Angular Material) -->
+
+<mat-toolbar color="primary" class="bottom-toolbar" role="navigation">
+  @for (element of elementsNav(); track element.route) {
+    <a
+      mat-button
+      class="nav-btn"
+      [routerLink]="element.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: element.route === '/restaurants' }">
+      <mat-icon class="nav-icon">{{ element.icone }}</mat-icon>
+      <span class="nav-label">{{ element.libelle }}</span>
+    </a>
+  }
+</mat-toolbar>

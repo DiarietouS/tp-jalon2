@@ -1,0 +1,163 @@
+<div class="profil-container">
+  @if (utilisateur) {
+    <!-- Card du profil -->
+    <mat-card class="profile-card">
+      <!-- Avatar et nom -->
+      <div class="profile-header">
+        <div class="avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+        <h2>{{ nomComplet }}</h2>
+        <span class="role-badge">{{ libelleRole }}</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Mode Affichage -->
+      @if (!modeEdition) {
+        <mat-nav-list>
+          <mat-list-item>
+            <mat-icon matListItemIcon>email</mat-icon>
+            <span matListItemTitle>Courriel</span>
+            <span matListItemLine>{{ utilisateur.courriel }}</span>
+          </mat-list-item>
+
+          <mat-list-item>
+            <mat-icon matListItemIcon>phone</mat-icon>
+            <span matListItemTitle>Téléphone</span>
+            <span matListItemLine>{{ utilisateur.telephone || 'Non renseigné' }}</span>
+          </mat-list-item>
+
+          <mat-list-item>
+            <mat-icon matListItemIcon>location_on</mat-icon>
+            <span matListItemTitle>Adresse</span>
+            <span matListItemLine>{{ utilisateur.adresse || 'Non renseignée' }}</span>
+          </mat-list-item>
+        </mat-nav-list>
+
+        <mat-divider></mat-divider>
+
+        <!-- Actions -->
+        <div class="profile-actions">
+          <button mat-stroked-button color="primary" (click)="activerEdition()">
+            <mat-icon>edit</mat-icon>
+            Modifier le profil
+          </button>
+
+          @if (utilisateur.role === 'restaurateur') {
+            <button mat-stroked-button color="primary" routerLink="/restaurateur/gestion">
+              <mat-icon>store</mat-icon>
+              Espace restaurateur
+            </button>
+          }
+
+          <button mat-raised-button color="warn" (click)="deconnecter()">
+            <mat-icon>logout</mat-icon>
+            Se déconnecter
+          </button>
+        </div>
+      }
+
+      <!-- Mode Édition -->
+      @if (modeEdition) {
+        <div class="edit-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Prénom</mat-label>
+            <input matInput [(ngModel)]="formulaire.prenom" placeholder="Prénom">
+            <mat-icon matPrefix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nom</mat-label>
+            <input matInput [(ngModel)]="formulaire.nom" placeholder="Nom">
+            <mat-icon matPrefix>person_outline</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Téléphone</mat-label>
+            <input matInput [(ngModel)]="formulaire.telephone" placeholder="Téléphone">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Adresse</mat-label>
+            <input matInput [(ngModel)]="formulaire.adresse" placeholder="Adresse">
+            <mat-icon matPrefix>location_on</mat-icon>
+          </mat-form-field>
+
+          <div class="edit-actions">
+            <button mat-raised-button color="primary" (click)="sauvegarder()">
+              <mat-icon>save</mat-icon>
+              Sauvegarder
+            </button>
+            <button mat-stroked-button (click)="annulerEdition()">
+              <mat-icon>cancel</mat-icon>
+              Annuler
+            </button>
+          </div>
+        </div>
+      }
+    </mat-card>
+
+    <!-- Liens rapides -->
+    @if (!modeEdition) {
+      <div class="quick-links">
+        <h3>Raccourcis</h3>
+        
+        @if (utilisateur.role === 'client') {
+          <div class="links-grid">
+            <a routerLink="/commandes" class="link-card">
+              <mat-icon>receipt_long</mat-icon>
+              <span>Mes commandes</span>
+            </a>
+            <a routerLink="/restaurants" class="link-card">
+              <mat-icon>favorite</mat-icon>
+              <span>Mes favoris</span>
+            </a>
+            <a routerLink="/panier" class="link-card">
+              <mat-icon>shopping_cart</mat-icon>
+              <span>Mon panier</span>
+            </a>
+            <a routerLink="/restaurants" class="link-card">
+              <mat-icon>restaurant</mat-icon>
+              <span>Restaurants</span>
+            </a>
+          </div>
+        } @else {
+          <div class="links-grid">
+            <a routerLink="/commandes" class="link-card">
+              <mat-icon>delivery_dining</mat-icon>
+              <span>Livraisons</span>
+            </a>
+            <a routerLink="/restaurateur/gestion" class="link-card">
+              <mat-icon>restaurant_menu</mat-icon>
+              <span>Mes plats</span>
+            </a>
+            <a routerLink="/restaurateur/gestion" class="link-card">
+              <mat-icon>store</mat-icon>
+              <span>Mon restaurant</span>
+            </a>
+          </div>
+        }
+      </div>
+    }
+  } @else {
+    <!-- Non connecté -->
+    <div class="not-logged">
+      <mat-icon>account_circle</mat-icon>
+      <h2>Bienvenue</h2>
+      <p>Connectez-vous pour accéder à votre profil</p>
+      
+      <div class="auth-buttons">
+        <button mat-raised-button color="primary" routerLink="/auth">
+          <mat-icon>login</mat-icon>
+          Se connecter
+        </button>
+        <button mat-stroked-button routerLink="/auth">
+          <mat-icon>person_add</mat-icon>
+          Créer un compte
+        </button>
+      </div>
+    </div>
+  }
+</div>

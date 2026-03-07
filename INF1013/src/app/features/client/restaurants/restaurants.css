@@ -1,0 +1,438 @@
+/* Page restaurants unifiée */
+.restaurants-page {
+  padding-bottom: 100px;
+  background: var(--color-warm-gray);
+}
+
+/* Hero Banner */
+.hero-banner {
+  position: relative;
+  height: 280px;
+  margin: 0 -16px;
+  overflow: hidden;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(28, 25, 23, 0.8), transparent);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+}
+
+.hero-badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  background: var(--color-primary);
+  color: white;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 400;
+  color: white;
+  line-height: 1.1;
+  margin: 0 0 8px 0;
+}
+
+.hero-subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Onglets */
+.restaurants-tabs {
+  margin-top: 16px;
+}
+
+::ng-deep .mat-mdc-tab-labels {
+  justify-content: center;
+}
+
+/* Section Catégories */
+.categories-section {
+  padding: 24px 0;
+}
+
+/* Angular Material chips (nouvelle UI) */
+.category-chips {
+  display: block;
+}
+
+.chip-icon {
+  margin-right: 6px;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.section-heading {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-deep-stone);
+  margin: 0 0 16px 0;
+}
+
+.category-circles {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.category-circles::-webkit-scrollbar {
+  display: none;
+}
+
+.category-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.circle-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f5f5f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.circle-icon .material-symbols-outlined {
+  font-size: 28px;
+  color: #78716c;
+  font-weight: 300;
+}
+
+.circle-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #78716c;
+  font-weight: 500;
+}
+
+.category-circle.active .circle-icon {
+  background: var(--color-deep-stone);
+  border-color: var(--color-deep-stone);
+}
+
+.category-circle.active .circle-icon .material-symbols-outlined {
+  color: white;
+}
+
+.category-circle.active .circle-label {
+  color: var(--color-deep-stone);
+}
+
+/* Section Restaurants */
+.restaurants-section {
+  padding-top: 8px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.section-count {
+  font-size: 12px;
+  color: #a8a29e;
+  font-style: italic;
+}
+
+/* Grille de restaurants */
+.restaurant-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Carte Magazine */
+.magazine-card {
+  display: block;
+  background: white;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.magazine-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Image de la carte */
+.card-image-container {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: filter 0.4s ease, transform 0.4s ease;
+}
+
+.magazine-card:hover .card-image {
+  filter: grayscale(0%);
+  transform: scale(1.02);
+}
+
+.card-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.badge-glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  color: var(--color-deep-stone);
+}
+
+/* Corps de la carte */
+.card-body {
+  padding: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--color-deep-stone);
+  margin: 0;
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-deep-stone);
+}
+
+.card-rating .material-symbols-outlined {
+  font-size: 16px;
+  color: #f59e0b;
+}
+
+.card-cuisine {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a8a29e;
+  margin: 0 0 12px 0;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #f5f5f4;
+}
+
+.delivery-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #78716c;
+}
+
+.delivery-info .material-symbols-outlined {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.delivery-fee {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+/* ========== ONGLET FAVORIS ========== */
+.favoris-content {
+  padding: 16px 0;
+}
+
+/* Grille des favoris */
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.restaurant-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.restaurant-image {
+  height: 140px;
+  object-fit: cover;
+}
+
+.restaurant-card .restaurant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.restaurant-card .restaurant-header h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+}
+
+.favorite-btn {
+  margin: -8px -8px 0 0;
+}
+
+.cuisine-type {
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 4px 0 12px;
+}
+
+.restaurant-info {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.restaurant-info span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.restaurant-info mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.rating mat-icon {
+  color: #ffc107;
+}
+
+mat-card-actions {
+  padding: 8px 16px 16px !important;
+}
+
+mat-card-actions button {
+  width: 100%;
+}
+
+/* États */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #78716c;
+  gap: 12px;
+}
+
+.loading-state .material-symbols-outlined {
+  font-size: 32px;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #a8a29e;
+  text-align: center;
+  gap: 12px;
+}
+
+.empty-state .material-symbols-outlined,
+.empty-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  font-weight: 200;
+  color: var(--mat-sys-outline);
+}
+
+.empty-state h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: var(--mat-sys-on-surface);
+}
+
+.empty-state p {
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0 0 24px;
+}

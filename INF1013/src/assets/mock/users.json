@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "email": "client@test.com",
+    "password": "test123",
+    "firstName": "Client1",
+    "lastName": "Anonyme",
+    "phone": "819-555-1111",
+    "address": "123 Rue Principale, Trois-Rivières",
+    "role": "client",
+    "favorites": [
+      1,
+      3
+    ]
+  },
+  {
+    "id": 2,
+    "email": "resto@bellaitalia.ca",
+    "password": "test123",
+    "firstName": "Marco",
+    "lastName": "Rossi",
+    "phone": "819-555-0101",
+    "address": "30 Rue Courval, Trois-Rivières",
+    "role": "restaurateur",
+    "favorites": []
+  },
+  {
+    "id": 3,
+    "email": "resto@burgerfactory.ca",
+    "password": "test123",
+    "firstName": "Jean",
+    "lastName": "Dupont",
+    "phone": "819-555-0202",
+    "address": "145 Boulevard des Forges, Trois-Rivières",
+    "role": "restaurateur",
+    "favorites": []
+  },
+  {
+    "id": 4,
+    "email": "client2@test.com",
+    "password": "test123",
+    "firstName": "Client2",
+    "lastName": "Anonyme",
+    "phone": "819-555-2222",
+    "address": "456 Avenue du Campus, Trois-Rivières",
+    "role": "client",
+    "favorites": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 5,
+    "email": "livreur@test.com",
+    "password": "test123",
+    "firstName": "Livreur",
+    "lastName": "Demo",
+    "phone": "819-555-3333",
+    "address": "Centre-ville, Trois-Rivières",
+    "role": "livreur",
+    "favorites": []
+  }
+]

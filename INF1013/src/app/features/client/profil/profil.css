@@ -1,0 +1,182 @@
+.profil-container {
+  padding: 16px;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+/* Card principale */
+.profile-card {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.avatar mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.role-badge {
+  margin-top: 8px;
+  padding: 4px 12px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+/* Liste d'infos */
+mat-nav-list {
+  padding: 8px 0;
+}
+
+mat-list-item mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+/* Actions */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.profile-actions button {
+  width: 100%;
+}
+
+/* Liens rapides */
+.quick-links {
+  margin-top: 24px;
+}
+
+.quick-links h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 16px;
+  color: var(--mat-sys-on-surface);
+}
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: var(--mat-sys-surface-container);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--mat-sys-on-surface);
+  transition: background-color 0.2s;
+}
+
+.link-card:hover {
+  background-color: var(--mat-sys-surface-container-high);
+}
+
+.link-card mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--mat-sys-primary);
+  margin-bottom: 8px;
+}
+
+.link-card span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Non connecté */
+.not-logged {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.not-logged mat-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  color: var(--mat-sys-outline);
+  margin-bottom: 16px;
+}
+
+.not-logged h2 {
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+
+.not-logged p {
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0 0 24px;
+}
+
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 250px;
+}
+
+.auth-buttons button {
+  width: 100%;
+}
+
+/* Formulaire d'édition */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+
+.edit-form mat-form-field {
+  width: 100%;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.edit-actions button {
+  flex: 1;
+}

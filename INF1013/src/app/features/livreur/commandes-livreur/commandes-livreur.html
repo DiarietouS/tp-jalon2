@@ -1,0 +1,59 @@
+<div class="page">
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon class="title-icon">delivery_dining</mat-icon>
+        Commandes à livrer
+      </mat-card-title>
+      <mat-card-subtitle>
+        Le paiement se fait après livraison. Le livreur ferme la commande une fois au domicile du client.
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (enChargement()) {
+        <div class="center">
+          <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        </div>
+      } @else {
+        @if (commandes().length === 0) {
+          <div class="empty">
+            <mat-icon>check_circle</mat-icon>
+            Aucune commande à livrer.
+          </div>
+        } @else {
+          <mat-list>
+            @for (c of commandes(); track c.id) {
+              <mat-list-item>
+                <div matListItemTitle>
+                  Commande #{{ c.id }} — {{ c.nomRestaurant }}
+                </div>
+                <div matListItemLine>
+                  {{ c.adresseLivraison }} • {{ c.telephone }}
+                </div>
+                <div matListItemLine>
+                  <mat-chip-set>
+                    <mat-chip>{{ etiquetteStatut(c.statut) }}</mat-chip>
+                    <mat-chip>Total: {{ c.total | number:'1.2-2' }} $</mat-chip>
+                  </mat-chip-set>
+                </div>
+
+                <div class="actions" matListItemMeta>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="fermerCommande(c)"
+                  >
+                    <mat-icon>done</mat-icon>
+                    Fermer (livrée)
+                  </button>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            }
+          </mat-list>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

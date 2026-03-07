@@ -1,0 +1,37 @@
+.bottom-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-around;
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+}
+
+.nav-btn {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 6px;
+  line-height: 1.1;
+  opacity: 0.9;
+}
+
+.nav-icon {
+  font-size: 22px;
+  height: 22px;
+  width: 22px;
+}
+
+.nav-label {
+  font-size: 11px;
+}
+
+.nav-btn.active {
+  opacity: 1;
+  font-weight: 600;
+}

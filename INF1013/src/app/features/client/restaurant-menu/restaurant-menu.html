@@ -1,0 +1,97 @@
+<!-- Page menu d'un restaurant -->
+<section class="restaurant-menu">
+
+  <!-- Bouton retour -->
+  <a routerLink="/restaurants" class="back-btn">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+
+  <!-- Bouton favori -->
+  @if (restaurant) {
+    <button class="favorite-btn" (click)="basculerFavori()">
+      <mat-icon>{{ serviceAuth.estFavori(restaurant.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+    </button>
+  }
+
+  @if (enChargement) {
+    <div class="loading">Chargement...</div>
+  }
+
+  @if (!enChargement && restaurant) {
+    <!-- En-tête du restaurant -->
+    <div class="restaurant-header">
+      <img [src]="restaurant.imageUrl" [alt]="restaurant.nom" class="cover-image">
+      <div class="header-content">
+        <h1>{{ restaurant.nom }}</h1>
+        <p class="cuisine">{{ restaurant.typeCuisine }}</p>
+        <div class="meta">
+          <span class="rating">
+            <mat-icon>star</mat-icon>
+            {{ restaurant.note }}
+          </span>
+          <span>
+            <mat-icon>schedule</mat-icon>
+            {{ restaurant.tempsLivraison }} min
+          </span>
+          <span>
+            <mat-icon>delivery_dining</mat-icon>
+            {{ restaurant.fraisLivraison }} $
+          </span>
+        </div>
+        <p class="address">{{ restaurant.adresse }}</p>
+      </div>
+    </div>
+
+    <!-- Menu par catégorie -->
+    <div class="menu-section">
+      @for (categorie of categories; track categorie) {
+        <h2 class="category-title">{{ categorie }}</h2>
+        
+        <div class="dishes-list">
+          @for (plat of getPlatsParCategorie(categorie); track plat.id) {
+            <div class="dish-card" [class.unavailable]="!plat.disponible">
+              <div class="dish-info">
+                <h3>{{ plat.nom }}</h3>
+                <p class="description">{{ plat.description }}</p>
+                <!-- COURS INF1013: Pipe personnalisé {{ valeur | prix }} -->
+                <span class="price">{{ plat.prix | prix }}</span>
+              </div>
+              
+              <div class="dish-image">
+                <img [src]="plat.imageUrl" [alt]="plat.nom">
+              </div>
+              
+              @if (plat.disponible) {
+                <button mat-mini-fab color="primary" 
+                        class="add-btn"
+                        (click)="ajouterAuPanier(plat)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              } @else {
+                <span class="unavailable-badge">Indisponible</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Bouton panier flottant -->
+    <!-- COURS INF1013: Lecture des signals avec () -->
+    @if (servicePanier.nombreArticles() > 0) {
+      <a routerLink="/panier" class="cart-fab">
+        <mat-icon>shopping_cart</mat-icon>
+        <span class="cart-count">{{ servicePanier.nombreArticles() }}</span>
+        <!-- COURS INF1013: Pipe personnalisé {{ valeur | prix }} -->
+        <span class="cart-total">Voir le panier - {{ servicePanier.total() | prix }}</span>
+      </a>
+    }
+  }
+
+  @if (!enChargement && !restaurant) {
+    <div class="not-found">
+      <p>Restaurant introuvable</p>
+      <a routerLink="/restaurants">Retour aux restaurants</a>
+    </div>
+  }
+</section>
