@@ -104,7 +104,7 @@ export class RestaurantService {
     return Math.max(...this.restaurants.map(r => r.id), 0) + 1;
   }
 
-  //Convertit les données JSON (anglais) vers le modèle français
+  //Convertit les données JSON
 
   private convertir(data: any): RestaurantModel {
     return {
