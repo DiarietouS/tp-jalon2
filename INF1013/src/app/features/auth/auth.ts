@@ -19,7 +19,7 @@ export interface LoginDTO {
   motDePasse: string;
 }
 
-// Authentification (Connexion/Inscription)
+// Authentification
 @Component({
   selector: 'app-auth',
   standalone: true,
@@ -59,14 +59,11 @@ export class Auth {
     vMinLength(s.motDePasse, 6, { message: 'Min. 6 caractères' }),
   ]);
 
-  /**
-   * Formulaire d'inscription
-   */
+  // Formulaire d'inscription
+
   formulaireInscription: FormGroup;
 
-  /**
-   * Constructeur
-   */
+  // Constructeur
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
