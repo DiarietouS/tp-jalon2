@@ -1,76 +1,73 @@
+Application de restaurant – INF1013
 
+Ce projet a été réalisé dans le cadre du cours INF1013.
+L’objectif est de développer une application web de livraison de repas en utilisant Angular pour le front-end.
+Le back-end sera développé plus tard avec Spring Boot, mais pour le Jalon I, les échanges avec le serveur sont simplement simulés.
 
-Prerequisite: **Node.js v20.19.0+** (required by recent Angular versions).  
+Description du projet
 
-1) Open the folder **INF1013** in IntelliJ IDEA.  
-2) Install dependencies (Terminal in IntelliJ):
-```bash
+L’application permet de simuler une plateforme de commande de repas avec différents types d’utilisateurs :
+
+Client : peut consulter les restaurants et leurs menus.
+
+Restaurateur : peut gérer son restaurant et ajouter ou supprimer des plats.
+
+Livreur : peut consulter les commandes à livrer.
+
+Les données sont chargées à partir de fichiers JSON locaux ou de services simulés, ce qui permet de tester le fonctionnement de l’interface sans avoir de serveur réel.
+
+Technologies utilisées
+
+Angular
+
+Angular Material
+
+TypeScript
+
+Reactive Forms
+
+Signals
+
+Firebase Hosting (pour le déploiement)
+
+Installation
+
+Ouvrir le dossier INF1013 dans l’environnement de développement.
+
+Installer les dépendances :
+
 npm install
-```
-3) Start the dev server:
-- Either run the shared configuration **“INF1013 - Angular Dev Server”** (Run ▶), or
-- In Terminal:
-```bash
+Lancer l’application
+
+Pour démarrer le serveur de développement :
+
 npm start
-```
-4) Open: `http://localhost:4200/`
 
+ou
 
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.2.
-
-## Development server
-
-To start a local development server, run:
-
-```bash
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ensuite ouvrir dans le navigateur :
 
-## Code scaffolding
+http://localhost:4200
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+L’application se met automatiquement à jour lorsque le code est modifié.
 
-```bash
-ng generate component component-name
-```
+Compilation du projet
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Pour générer la version de production :
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
 ng build
-```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Les fichiers compilés seront placés dans le dossier :
 
-## Running unit tests
+dist/
+Déploiement
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Le projet est déployé sur Firebase Hosting.
 
-```bash
-ng test
-```
+Commandes utilisées :
 
-## Running end-to-end tests
+firebase login
+firebase deploy
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
