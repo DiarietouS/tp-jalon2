@@ -10,8 +10,8 @@ export interface ArticlePanier {
 export interface PanierModel {
   idRestaurant: number;
   nomRestaurant: string;
-  articles: ArticlePanier[];    // Liste des plats commandés
-  fraisLivraison: number;       // Frais de livraison
+  articles: ArticlePanier[];
+  fraisLivraison: number;
 }
 
 // Alias pour compatibilité
