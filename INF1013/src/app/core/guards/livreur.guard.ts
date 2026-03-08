@@ -2,10 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-/**
- * Garde de rôle "livreur".
- * Autorise l'accès uniquement si l'utilisateur est connecté et possède le rôle 'livreur'.
- */
+
 export const livreurGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);

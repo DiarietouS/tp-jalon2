@@ -1,6 +1,4 @@
-# INF1013
 
-## Run in IntelliJ IDEA (JetBrains)
 
 Prerequisite: **Node.js v20.19.0+** (required by recent Angular versions).  
 

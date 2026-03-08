@@ -48,7 +48,7 @@
   margin: 4px 0;
 }
 
-/* Animation de rotation pour le loader */
+
 .spin {
   animation: spin 1s linear infinite;
 }
@@ -62,7 +62,7 @@
   }
 }
 
-/* Style des onglets */
+
 ::ng-deep .mat-mdc-tab-labels {
   justify-content: center;
 }

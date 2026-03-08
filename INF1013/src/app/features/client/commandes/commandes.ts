@@ -15,23 +15,7 @@ import { RestaurantService } from '../../../core/services/restaurant.service';
 import { RestaurantModel } from '../../../core/models/restaurant';
 import { DateRelativePipe, PrixPipe } from '../../../shared/pipes';
 
-/**
- * ============================================================================
- * COMPOSANT COMMANDES - Historique et gestion
- * ============================================================================
- * 
- * COURS INF1013 - PIPES PERSONNALISÉS:
- * "Les pipes permettent de transformer des valeurs dans les templates.
- * On peut créer des pipes personnalisés pour des besoins spécifiques."
- * 
- * Utilisation:
- * {{ commande.creeLe | dateRelative }}         → "Il y a 5 minutes"
- * {{ commande.creeLe | dateRelative:'complet' }} → "Mercredi 26 février 2026"
- * {{ commande.total | prix }}                   → "25,99 $"
- * 
- * @see Diapo: Pipes personnalisés
- * ============================================================================
- */
+
 @Component({
   selector: 'app-commandes',
   standalone: true,
@@ -56,7 +40,7 @@ export class Commandes implements OnInit {
   // Données pour vue restaurateur
   restaurantRestaurateur: RestaurantModel | null = null;
   commandesRestaurateur: Commande[] = [];
-  
+
   // États
   enChargement = true;
   messageErreur: string | null = null;
@@ -74,7 +58,7 @@ export class Commandes implements OnInit {
   ngOnInit(): void {
     const utilisateur = this.authService.getUtilisateurCourant();
     this.estRestaurateur = utilisateur?.role === 'restaurateur';
-    
+
     if (this.estRestaurateur) {
       this.chargerCommandesRestaurateur();
     } else {
@@ -82,17 +66,16 @@ export class Commandes implements OnInit {
     }
   }
 
-  /**
-   * Charge les commandes de l'utilisateur connecté (vue client)
-   */
+  // Charge les commandes de l'utilisateur connecté
+
   private chargerCommandes(): void {
     const utilisateur = this.authService.getUtilisateurCourant();
-    
+
     if (utilisateur) {
       this.orderService.getCommandesParUtilisateur(utilisateur.id).subscribe({
         next: (commandes) => {
           // Trier par date décroissante (plus récent en premier)
-          this.commandes = commandes.sort((a, b) => 
+          this.commandes = commandes.sort((a, b) =>
             new Date(b.creeLe).getTime() - new Date(a.creeLe).getTime()
           );
           this.enChargement = false;
@@ -105,10 +88,10 @@ export class Commandes implements OnInit {
         }
       });
     } else {
-      // Si non connecté, afficher toutes les commandes (pour démo)
+      // Si non connecté, afficher toutes les commandes
       this.orderService.getCommandes().subscribe({
         next: (commandes) => {
-          this.commandes = commandes.sort((a, b) => 
+          this.commandes = commandes.sort((a, b) =>
             new Date(b.creeLe).getTime() - new Date(a.creeLe).getTime()
           );
           this.enChargement = false;
@@ -123,9 +106,8 @@ export class Commandes implements OnInit {
     }
   }
 
-  /**
-   * Charge les commandes du restaurant appartenant au restaurateur connecté.
-   */
+  // Charge les commandes du restaurant appartenant au restaurateur connecté.
+
   private chargerCommandesRestaurateur(): void {
     this.enChargement = true;
     this.messageErreur = null;
@@ -170,9 +152,8 @@ export class Commandes implements OnInit {
     });
   }
 
-  /**
-   * Change le statut d'une commande (restaurateur)
-   */
+  // Change le statut d'une commande
+
   changerStatutCommande(id: number, statut: Commande['statut']): void {
     this.orderService.mettreAJourStatut(id, statut).subscribe(() => {
       const idx = this.commandesRestaurateur.findIndex(c => c.id === id);
@@ -185,19 +166,16 @@ export class Commandes implements OnInit {
     });
   }
 
-  /**
-   * Retourne la couleur du chip selon le statut
-   */
+  // Retourne la couleur du chip selon le statut
   getCouleurStatut(statut: string): string {
     return this.formateur.getCouleurStatut(statut);
   }
 
-  /**
-   * Retourne le libellé français du statut
-   */
+  // Retourne le libellé français du statut
+
   getLibelleStatut(statut: string): string {
     return this.formateur.getLibelleStatutCommande(statut);
   }
 
-  // Les méthodes utilitaires (couleurs/libellés) viennent du FormateurService
+
 }

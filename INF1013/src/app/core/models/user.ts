@@ -5,13 +5,13 @@ export type RoleUtilisateur = 'client' | 'restaurateur' | 'livreur';
 export interface Utilisateur {
   id: number;
   courriel: string;
-  motDePasse: string;        // Note: jamais stocké côté client en production - juste pour le mock
+  motDePasse: string;
   prenom: string;
   nom: string;
   telephone: string;
   adresse: string;
   role: RoleUtilisateur;
-  favoris: number[];         // Liste des IDs de restaurants favoris
+  favoris: number[];
 }
 
 // Alias pour compatibilité

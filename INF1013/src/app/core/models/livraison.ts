@@ -17,6 +17,6 @@ export interface LivraisonModel {
   lignes: LigneLivraison[];
 }
 
-// Alias pour compatibilité
+
 export type LivraisonStatus = StatutLivraison;
 export type LivraisonLine = LigneLivraison;

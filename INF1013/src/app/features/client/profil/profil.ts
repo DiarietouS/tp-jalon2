@@ -13,10 +13,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Utilisateur } from '../../../core/models';
 import { NotificationService } from '../../../core/services/notification.service';
 
-/**
- * Page de profil utilisateur
- * Affiche les informations et permet de les modifier
- */
+// Page de profil utilisateur
+
 @Component({
   selector: 'app-profil',
   standalone: true,
@@ -37,10 +35,9 @@ import { NotificationService } from '../../../core/services/notification.service
 })
 export class Profil implements OnInit {
   utilisateur: Utilisateur | null = null;
-  
-  // Mode édition
+
   modeEdition = false;
-  
+
   // Données du formulaire d'édition
   formulaire = {
     prenom: '',
@@ -67,16 +64,14 @@ export class Profil implements OnInit {
     }
   }
 
-  /**
-   * Active le mode édition
-   */
+  // Active le mode édition
+
   activerEdition(): void {
     this.modeEdition = true;
   }
 
-  /**
-   * Annule l'édition
-   */
+  // Annule l'édition
+
   annulerEdition(): void {
     this.modeEdition = false;
     if (this.utilisateur) {
@@ -89,44 +84,39 @@ export class Profil implements OnInit {
     }
   }
 
-  /**
-   * Sauvegarde les modifications du profil
-   */
+  // Sauvegarde les modifications du profil
   sauvegarder(): void {
     if (!this.utilisateur) return;
-    
+
     this.serviceAuth.mettreAJourProfil({
       prenom: this.formulaire.prenom,
       nom: this.formulaire.nom,
       telephone: this.formulaire.telephone,
       adresse: this.formulaire.adresse
     });
-    
+
     this.utilisateur = this.serviceAuth.getUtilisateurCourant();
     this.modeEdition = false;
     this.notification.afficherSucces('Profil mis à jour');
   }
 
-  /**
-   * Déconnecte l'utilisateur et redirige vers auth
-   */
+  // Déconnecte l'utilisateur et redirige vers auth
+
   deconnecter(): void {
     this.serviceAuth.deconnexion();
     this.notification.afficher('Déconnexion réussie');
     this.routeur.navigate(['/auth']);
   }
 
-  /**
-   * Retourne le nom complet de l'utilisateur
-   */
+  // Retourne le nom complet de l'utilisateur
+
   get nomComplet(): string {
     if (!this.utilisateur) return '';
     return `${this.utilisateur.prenom} ${this.utilisateur.nom}`;
   }
 
-  /**
-   * Retourne le libellé du rôle en français
-   */
+  // Retourne le libellé du rôle en français
+
   get libelleRole(): string {
     if (!this.utilisateur) return '';
     return this.utilisateur.role === 'client' ? 'Client' : 'Restaurateur';

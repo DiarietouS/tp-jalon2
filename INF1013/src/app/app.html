@@ -1,15 +1,10 @@
-<!-- Layout principal de l'application -->
-<!-- 
-  COURS INF1013 - OUTPUT() & ÉVÉNEMENTS:
-  "(rechercheChange)" capte l'événement émis par le composant Header
-  "$event" contient la valeur émise (le texte de recherche)
--->
+
 <app-header (rechercheChange)="onRecherche($event)"></app-header>
 
-<!-- Contenu des pages (router) -->
+//router
 <main class="main-content">
   <router-outlet></router-outlet>
 </main>
 
-<!-- Navigation du bas -->
+
 <app-bottom-nav [roleUtilisateur]="roleActuel"></app-bottom-nav>

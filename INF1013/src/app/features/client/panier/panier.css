@@ -1,4 +1,4 @@
-/* Page du panier */
+
 .panier {
   padding-bottom: 100px;
 }
@@ -9,7 +9,7 @@
   margin: 0 0 16px 0;
 }
 
-/* Panier vide */
+
 .empty-cart {
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@
   margin: 0;
 }
 
-/* Info restaurant */
+
 .restaurant-info {
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@
   color: var(--mat-sys-primary);
 }
 
-/* Liste des items */
+
 .cart-items {
   display: flex;
   flex-direction: column;
@@ -55,7 +55,7 @@
   margin-bottom: 24px;
 }
 
-/* Item du panier */
+
 .cart-item {
   display: flex;
   align-items: center;
@@ -92,7 +92,7 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-/* Contrôles de quantité */
+
 .quantity-controls {
   display: flex;
   align-items: center;
@@ -111,7 +111,7 @@
   text-align: right;
 }
 
-/* Récapitulatif */
+
 .cart-summary {
   background: var(--mat-sys-surface);
   border-radius: 12px;
@@ -135,7 +135,7 @@
   color: var(--mat-sys-on-surface);
 }
 
-/* Bouton commander */
+
 .checkout-btn {
   width: 100%;
   padding: 16px;

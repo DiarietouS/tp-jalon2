@@ -1,4 +1,4 @@
-// Modèle représentant un plat au menu d'un restaurant
+// un plat au menu d'un restaurant
 export interface Plat {
   id: number;
   nom: string;               // Nom du plat
@@ -10,5 +10,5 @@ export interface Plat {
   idRestaurant: number;      // ID du restaurant propriétaire
 }
 
-// Alias pour compatibilité
+
 export type Dish = Plat;

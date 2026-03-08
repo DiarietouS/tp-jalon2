@@ -13,20 +13,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PrixPipe } from '../../../shared/pipes';
 
-/**
- * ============================================================================
- * PAGE MENU RESTAURANT
- * ============================================================================
- * 
- * COURS INF1013 - PIPES PERSONNALISÉS:
- * "Les pipes permettent de transformer des valeurs dans les templates.
- * On peut créer des pipes personnalisés pour des besoins spécifiques."
- * 
- * Utilisation: {{ plat.prix | prix }} → "12,99 $"
- * 
- * @see Diapo: Pipes personnalisés
- * ============================================================================
- */
+
 @Component({
   selector: 'app-restaurant-menu',
   imports: [RouterLink, MatIconModule, MatButtonModule, PrixPipe],
@@ -36,20 +23,17 @@ import { PrixPipe } from '../../../shared/pipes';
 export class RestaurantMenu implements OnInit, OnDestroy {
   // Restaurant affiché
   restaurant: RestaurantModel | null = null;
-  
+
   // Plats du restaurant
   plats: Plat[] = [];
-  
+
   // Catégories de plats disponibles
   categories: string[] = [];
-  
+
   // État de chargement
   enChargement = true;
 
-  /**
-   * COURS INF1013 - OnDestroy
-   * "Cleanup... Unsubscribe Observables" pour éviter les fuites.
-   */
+
   private readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -63,11 +47,7 @@ export class RestaurantMenu implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    /**
-     * COURS INF1013 - Passage de paramètres + Observable paramMap
-     * "ActivatedRoute.paramMap est une Observable".
-     * On observe les changements d'ID et on recharge la page.
-     */
+
     this.route.paramMap
       .pipe(
         map((pm) => Number(pm.get('id'))),
@@ -82,16 +62,12 @@ export class RestaurantMenu implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Charge le restaurant et ses plats
-   */
+  // Charge le restaurant et ses plats
+
   private chargerDonnees$(id: number) {
     this.enChargement = true;
 
-    /**
-     * COURS INF1013 - Composition de flux (combineLatest + map)
-     * On charge restaurants + plats en parallèle et on combine.
-     */
+
     return combineLatest([
       this.serviceRestaurant.loadRestaurants(),
       this.servicePlats.chargerPlats(),
@@ -106,35 +82,30 @@ export class RestaurantMenu implements OnInit, OnDestroy {
     );
   }
 
-  /**
-   * Retourne les plats d'une catégorie
-   */
+
   getPlatsParCategorie(categorie: string): Plat[] {
     return this.plats.filter(p => p.categorie === categorie);
   }
 
-  /**
-   * Ajoute un plat au panier
-   */
+  // Ajoute un plat au panier
+
   ajouterAuPanier(plat: Plat): void {
     if (!this.restaurant) return;
-    
+
     this.servicePanier.ajouterAuPanier(
       plat,
       this.restaurant.id,
       this.restaurant.nom,
       this.restaurant.fraisLivraison
     );
-    
+
     this.notification.afficher(`${plat.nom} ajouté au panier`);
   }
 
-  /**
-   * Bascule le statut favori du restaurant
-   */
+
   basculerFavori(): void {
     if (!this.restaurant) return;
-    
+
     if (!this.serviceAuth.estConnecte()) {
       this.notification.afficher('Connectez-vous pour ajouter aux favoris');
       return;

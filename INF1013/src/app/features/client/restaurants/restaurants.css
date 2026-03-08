@@ -1,10 +1,10 @@
-/* Page restaurants unifiée */
+
 .restaurants-page {
   padding-bottom: 100px;
   background: var(--color-warm-gray);
 }
 
-/* Hero Banner */
+
 .hero-banner {
   position: relative;
   height: 280px;
@@ -56,7 +56,7 @@
   margin: 0;
 }
 
-/* Onglets */
+
 .restaurants-tabs {
   margin-top: 16px;
 }
@@ -65,12 +65,12 @@
   justify-content: center;
 }
 
-/* Section Catégories */
+
 .categories-section {
   padding: 24px 0;
 }
 
-/* Angular Material chips (nouvelle UI) */
+
 .category-chips {
   display: block;
 }
@@ -152,7 +152,7 @@
   color: var(--color-deep-stone);
 }
 
-/* Section Restaurants */
+
 .restaurants-section {
   padding-top: 8px;
 }
@@ -170,14 +170,14 @@
   font-style: italic;
 }
 
-/* Grille de restaurants */
+
 .restaurant-grid {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Carte Magazine */
+
 .magazine-card {
   display: block;
   background: white;
@@ -192,7 +192,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Image de la carte */
+
 .card-image-container {
   position: relative;
   height: 180px;
@@ -231,7 +231,7 @@
   color: var(--color-deep-stone);
 }
 
-/* Corps de la carte */
+
 .card-body {
   padding: 16px;
 }
@@ -300,12 +300,12 @@
   color: var(--color-primary);
 }
 
-/* ========== ONGLET FAVORIS ========== */
+
 .favoris-content {
   padding: 16px 0;
 }
 
-/* Grille des favoris */
+
 .favorites-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -377,7 +377,7 @@ mat-card-actions button {
   width: 100%;
 }
 
-/* États */
+
 .loading-state {
   display: flex;
   flex-direction: column;

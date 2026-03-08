@@ -1,7 +1,7 @@
-<!-- Page restaurants unifiée avec onglets -->
+
 <section class="restaurants-page">
-  
-  <!-- Hero Banner -->
+
+
   <div class="hero-banner">
     <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80" alt="Délicieux plat" class="hero-image">
     <div class="hero-overlay">
@@ -11,13 +11,13 @@
     </div>
   </div>
 
-  <!-- Onglets -->
-  <mat-tab-group 
-    [(selectedIndex)]="ongletActif" 
+
+  <mat-tab-group
+    [(selectedIndex)]="ongletActif"
     (selectedIndexChange)="onChangementOnglet($event)"
     class="restaurants-tabs">
-    
-    <!-- ========== ONGLET TOUS LES RESTAURANTS ========== -->
+
+
     <mat-tab label="Tous les restaurants">
       <!-- Catégories avec icônes -->
       <div class="categories-section">
@@ -34,7 +34,7 @@
         </mat-chip-listbox>
       </div>
 
-      <!-- État de chargement -->
+
       @if (enChargement) {
         <div class="loading-state">
           <span class="material-symbols-outlined spinning">progress_activity</span>
@@ -42,14 +42,14 @@
         </div>
       }
 
-      <!-- Liste des restaurants -->
+
       @if (!enChargement) {
         <div class="restaurants-section">
           <div class="section-header">
             <h2 class="section-heading">Près de vous</h2>
             <span class="section-count">{{ restaurantsFiltres.length }} restaurants</span>
           </div>
-          
+
           <div class="restaurant-grid">
             @for (resto of restaurantsFiltres; track resto.id) {
               <a class="magazine-card" [routerLink]="['/restaurant', resto.id]">
@@ -62,7 +62,7 @@
                     }
                   </div>
                 </div>
-                
+
                 <!-- Contenu de la carte -->
                 <div class="card-body">
                   <div class="card-header">
@@ -72,9 +72,9 @@
                       <span>{{ resto.note }}</span>
                     </div>
                   </div>
-                  
+
                   <p class="card-cuisine">{{ resto.typeCuisine }}</p>
-                  
+
                   <div class="card-footer">
                     <span class="delivery-info">
                       <span class="material-symbols-outlined">schedule</span>
@@ -89,7 +89,7 @@
             }
           </div>
 
-          <!-- Aucun restaurant -->
+
           @if (restaurantsFiltres.length === 0) {
             <div class="empty-state">
               <span class="material-symbols-outlined">search_off</span>
@@ -100,7 +100,7 @@
       }
     </mat-tab>
 
-    <!-- ========== ONGLET FAVORIS ========== -->
+
     <mat-tab label="Mes favoris">
       <div class="favoris-content">
         @if (enChargement) {
@@ -109,7 +109,7 @@
             <p>Chargement...</p>
           </div>
         } @else if (!estConnecte) {
-          <!-- Non connecté -->
+
           <div class="empty-state">
             <mat-icon>favorite_border</mat-icon>
             <h2>Connectez-vous</h2>
@@ -120,7 +120,7 @@
             </button>
           </div>
         } @else if (restaurantsFavoris.length === 0) {
-          <!-- Aucun favori -->
+
           <div class="empty-state">
             <mat-icon>favorite_border</mat-icon>
             <h2>Aucun favori</h2>
@@ -131,29 +131,29 @@
             </button>
           </div>
         } @else {
-          <!-- Liste des favoris -->
+
           <div class="favorites-grid">
             @for (restaurant of restaurantsFavoris; track restaurant.id) {
               <mat-card class="restaurant-card">
                 <!-- Image -->
-                <img mat-card-image 
-                     [src]="restaurant.imageUrl" 
+                <img mat-card-image
+                     [src]="restaurant.imageUrl"
                      [alt]="restaurant.nom"
                      class="restaurant-image">
-                
+
                 <mat-card-content>
                   <div class="restaurant-header">
                     <h3>{{ restaurant.nom }}</h3>
-                    <button mat-icon-button 
-                            color="warn" 
+                    <button mat-icon-button
+                            color="warn"
                             (click)="retirerDesFavoris(restaurant)"
                             class="favorite-btn">
                       <mat-icon>favorite</mat-icon>
                     </button>
                   </div>
-                  
+
                   <p class="cuisine-type">{{ restaurant.typeCuisine }}</p>
-                  
+
                   <div class="restaurant-info">
                     <span class="rating">
                       <mat-icon>star</mat-icon>
@@ -171,8 +171,8 @@
                 </mat-card-content>
 
                 <mat-card-actions>
-                  <button mat-raised-button 
-                          color="primary" 
+                  <button mat-raised-button
+                          color="primary"
                           [routerLink]="['/restaurant', restaurant.id]">
                     <mat-icon>restaurant_menu</mat-icon>
                     Voir le menu

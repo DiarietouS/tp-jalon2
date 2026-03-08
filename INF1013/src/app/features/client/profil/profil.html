@@ -99,11 +99,11 @@
       }
     </mat-card>
 
-    <!-- Liens rapides -->
+
     @if (!modeEdition) {
       <div class="quick-links">
         <h3>Raccourcis</h3>
-        
+
         @if (utilisateur.role === 'client') {
           <div class="links-grid">
             <a routerLink="/commandes" class="link-card">
@@ -142,12 +142,12 @@
       </div>
     }
   } @else {
-    <!-- Non connecté -->
+
     <div class="not-logged">
       <mat-icon>account_circle</mat-icon>
       <h2>Bienvenue</h2>
       <p>Connectez-vous pour accéder à votre profil</p>
-      
+
       <div class="auth-buttons">
         <button mat-raised-button color="primary" routerLink="/auth">
           <mat-icon>login</mat-icon>

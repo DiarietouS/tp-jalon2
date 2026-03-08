@@ -1,12 +1,12 @@
-/* Conteneur racine - Style magazine */
+
 :host {
   display: block;
   min-height: 100vh;
   background: var(--color-warm-gray);
 }
 
-/* Zone de contenu principal */
+
 .main-content {
   padding: 16px;
-  padding-bottom: 80px; /* Espace pour la navigation du bas */
+  padding-bottom: 80px;
 }

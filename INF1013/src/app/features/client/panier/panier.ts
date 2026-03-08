@@ -10,24 +10,7 @@ import { OrderService } from '../../../core/services/order.service';
 import { ArticlePanier } from '../../../core/models/cart';
 import { NotificationService } from '../../../core/services/notification.service';
 
-/**
- * ============================================================================
- * COMPOSANT PANIER - Page du panier d'achat
- * ============================================================================
- * 
- * COURS INF1013 - CONSOMMATION DE SIGNALS
- * ---------------------------------------
- * "La valeur d'un signal se lit en appelant sa fonction d'accès (getter),
- * ce qui permet à Angular de suivre son utilisation."
- * 
- * Dans ce composant, on consomme les signals du CartService:
- * - servicePanier.panier() pour lire le panier
- * - servicePanier.nombreArticles() pour le nombre d'articles
- * - servicePanier.sousTotal() et servicePanier.total() pour les montants
- * 
- * @see Diapo: C'est quoi un signal, Computed Signal
- * ============================================================================
- */
+
 @Component({
   selector: 'app-panier',
   imports: [RouterLink, DecimalPipe, MatIconModule, MatButtonModule],
@@ -35,7 +18,7 @@ import { NotificationService } from '../../../core/services/notification.service
   styleUrl: './panier.css',
 })
 export class Panier {
-  
+
   constructor(
     public servicePanier: CartService,
     private readonly serviceAuth: AuthService,
@@ -44,33 +27,24 @@ export class Panier {
     private readonly notification: NotificationService
   ) {}
 
-  /**
-   * Augmente la quantité d'un article
-   */
+  // Augmente la quantité d'un article
   augmenterQuantite(article: ArticlePanier): void {
     this.servicePanier.modifierQuantite(article.plat.id, article.quantite + 1);
   }
 
-  /**
-   * Diminue la quantité d'un article
-   */
+  // Diminue la quantité d'un article
+
   diminuerQuantite(article: ArticlePanier): void {
     this.servicePanier.modifierQuantite(article.plat.id, article.quantite - 1);
   }
 
-  /**
-   * Supprime un article du panier
-   */
+  // Supprime un article du panier
+
   supprimerArticle(article: ArticlePanier): void {
     this.servicePanier.supprimerDuPanier(article.plat.id);
   }
 
-  /**
-   * Passe à la commande
-   * Vérifie que l'utilisateur est connecté avant de commander
-   * 
-   * COURS INF1013: Lecture des signals avec ()
-   */
+ //   p asser la commande
   commander(): void {
     // Vérifier si l'utilisateur est connecté
     if (!this.serviceAuth.estConnecte()) {
@@ -79,10 +53,9 @@ export class Panier {
       return;
     }
 
-    // COURS INF1013: Lecture du signal utilisateur avec ()
+
     const utilisateur = this.serviceAuth.utilisateurCourant();
-    
-    // COURS INF1013: Lecture du signal panier avec ()
+
     const panier = this.servicePanier.panier();
 
     if (!panier || panier.articles.length === 0) {
@@ -90,7 +63,7 @@ export class Panier {
       return;
     }
 
-    // Créer la commande avec les valeurs des signals
+    // Creer commande
     this.serviceCommandes.creerCommande({
       idClient: utilisateur?.id,
       idRestaurant: panier.idRestaurant,

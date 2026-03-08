@@ -13,9 +13,7 @@ import { Commande } from '../../../core/models';
 import { OrderService } from '../../../core/services/order.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
-/**
- * Liste des commandes à livrer (rôle "livreur") + fermeture de commande après livraison.
- */
+
 @Component({
   selector: 'app-commandes-livreur',
   standalone: true,
@@ -52,9 +50,7 @@ export class CommandesLivreur implements OnInit {
     });
   }
 
-  /**
-   * Le livreur "ferme" la commande une fois livré (statut = livrée).
-   */
+
   fermerCommande(commande: Commande): void {
     this.orderService.mettreAJourStatut(commande.id, 'livree').subscribe(() => {
       this.notification.afficherSucces(`Commande #${commande.id} fermée (livrée).`);

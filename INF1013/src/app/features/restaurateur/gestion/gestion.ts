@@ -18,45 +18,13 @@ import { RestaurantService } from '../../../core/services/restaurant.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
-/**
- * ============================================================================
- * COMPOSANT GESTION - Gestion du restaurant (plats + infos)
- * ============================================================================
- * 
- * COURS INF1013 - REACTIVE FORMS (Controller Driven Forms)
- * --------------------------------------------------------
- * "Angular utilise 2 approches pour gérer les formulaires:
- * Les Reactive Forms (RF) - Plus structurées, mise à l'échelle plus facile,
- * destinés à de gros formulaires."
- * 
- * "La construction des RF débute dans le contrôleur"
- * 
- * FORMBUILDER (Pattern Fabrique):
- * "Pour éviter les constructions lourdes des instances de chaque formControl,
- * on utilise un service de fabrique à l'aide du composant FormBuilder"
- * 
- * "profileForm = this.fb.group({
- *   firstName: [''],
- *   lastName: [''],
- *   address: this.fb.group({
- *     street: [''], city: ['']
- *   })
- * });"
- * 
- * CYCLE DE VIE OnInit:
- * "OnInit doit s'utiliser pour faire des initialisations complexes,
- * juste après la construction. Le constructeur ne doit faire
- * qu'initialiser les variables membres (DI)."
- * 
- * @see Diapo: Les Reactive Forms, Cycle de vie des composants: OnInit
- * ============================================================================
- */
+
 @Component({
   selector: 'app-gestion',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,  // COURS INF1013: Module pour Reactive Forms
+    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -71,50 +39,29 @@ import { NotificationService } from '../../../core/services/notification.service
   styleUrl: './gestion.css'
 })
 export class Gestion implements OnInit {
-  
-  /**
-   * Index de l'onglet actif (signal mutable)
-   * COURS INF1013: "Les signaux modifiables offrent des fonctionnalités
-   * permettant de mettre à jour directement leurs valeurs"
-   */
+
+
   ongletActif = signal<number>(0);
 
-  // === Données pour les plats ===
+
   plats: Plat[] = [];
   categories = ['Entrées', 'Plats principaux', 'Desserts', 'Boissons', 'Accompagnements'];
 
-  // === Données pour le restaurant ===
+
   restaurant: RestaurantModel | null = null;
   modeEditionRestaurant = signal<boolean>(false);
 
-  /**
-   * Formulaire pour les plats (Reactive Form)
-   * 
-   * COURS INF1013 - FORMGROUP:
-   * "Les RF permettent un regroupement logique des formulaires.
-   * L'objectif est d'obtenir une structure de données cohérente (json)"
-   */
+
   formulairePlat!: FormGroup;
 
-  /**
-   * Formulaire pour les infos restaurant
-   * 
-   * COURS INF1013 - VALIDATION:
-   * "fname: ['', [Validators.required, Validators.minLength(2)]]"
-   */
+
   formulaireRestaurant!: FormGroup;
 
-  // États (signals)
+  // Signals
   enChargement = signal<boolean>(true);
   messageErreur = signal<string | null>(null);
 
-  /**
-   * Constructeur avec injection de dépendances
-   * 
-   * COURS INF1013: "La construction d'un composant doit rester simple.
-   * Le constructeur ne doit faire qu'initialiser les variables membres (DI).
-   * Privilégier OnInit pour récupérer les données."
-   */
+
   constructor(
     private readonly platsService: DishesService,
     private readonly restaurantService: RestaurantService,
@@ -124,24 +71,9 @@ export class Gestion implements OnInit {
     private readonly cdr: ChangeDetectorRef
   ) {}
 
-  /**
-   * Initialisation du composant
-   * 
-   * COURS INF1013 - CYCLE DE VIE OnInit:
-   * "OnInit doit s'utiliser pour deux raisons principales:
-   * - Faire des initialisations complexes, juste après la construction
-   * - Configurer le composant après initialisation des propriétés"
-   * 
-   * "Privilégier OnInit pour récupérer les données, observer les variables..."
-   */
+
   ngOnInit(): void {
-    /**
-     * COURS INF1013 - FORMBUILDER:
-     * "profileForm = this.fb.group({
-     *   firstName: [''],
-     *   lastName: [''],
-     * });"
-     */
+
     this.formulairePlat = this.fb.group({
       nom: ['', Validators.required],
       description: [''],
@@ -151,11 +83,7 @@ export class Gestion implements OnInit {
       disponible: [true]
     });
 
-    /**
-     * COURS INF1013 - VALIDATION des Formulaires RF:
-     * "Le module RF propose une famille de validateurs prédéfinis:
-     * Validators.required, Validators.email, Validators.min()"
-     */
+
     this.formulaireRestaurant = this.fb.group({
       nom: ['', Validators.required],
       adresse: ['', Validators.required],
@@ -170,13 +98,7 @@ export class Gestion implements OnInit {
     this.chargerDonnees();
   }
 
-  /**
-   * Charge les plats et les infos du restaurant
-   * 
-   * COURS INF1013 - FILTRAGE PAR PROPRIÉTAIRE:
-   * On utilise l'ID de l'utilisateur connecté (restaurateur) pour
-   * filtrer les restaurants et n'afficher que celui qu'il possède.
-   */
+
   private chargerDonnees(): void {
     this.enChargement.set(true);
     this.messageErreur.set(null);
@@ -198,7 +120,7 @@ export class Gestion implements OnInit {
       next: (liste) => {
         // Récupérer l'utilisateur connecté (restaurateur)
         const utilisateur = this.authService.utilisateurCourant();
-        
+
         if (utilisateur && utilisateur.role === 'restaurateur') {
           // Filtrer pour trouver le restaurant dont l'idProprietaire correspond à l'ID du restaurateur
           this.restaurant = liste.find(r => r.idProprietaire === utilisateur.id) || null;
@@ -220,12 +142,7 @@ export class Gestion implements OnInit {
     });
   }
 
-  /**
-   * Ajoute un nouveau plat
-   * 
-   * COURS INF1013 - VALIDATION:
-   * "markAllAsTouched() force l'affichage des erreurs de validation"
-   */
+
   ajouterPlat(): void {
     if (this.formulairePlat.invalid) {
       this.formulairePlat.markAllAsTouched();
@@ -252,7 +169,7 @@ export class Gestion implements OnInit {
       categorie: valeurs.categorie,
       imageUrl: valeurs.imageUrl || '',
       disponible: valeurs.disponible,
-      idRestaurant: this.restaurant.id  // Utilise l'ID du restaurant du restaurateur
+      idRestaurant: this.restaurant.id
     };
 
     this.platsService.ajouterPlat(nouveauPlat).subscribe({
@@ -269,9 +186,8 @@ export class Gestion implements OnInit {
     });
   }
 
-  /**
-   * Supprime un plat
-   */
+  // Supprime un plat
+
   supprimerPlat(id: number): void {
     this.platsService.supprimerPlat(id).subscribe({
       next: (liste) => {
@@ -286,13 +202,7 @@ export class Gestion implements OnInit {
     });
   }
 
-  /**
-   * Active le mode édition du restaurant
-   * 
-   * COURS INF1013 - patchValue():
-   * "patchValue() pour les formGroups permet de faire
-   * une projection des valeurs dans le formulaire"
-   */
+
   activerEditionRestaurant(): void {
     if (this.restaurant) {
       this.formulaireRestaurant.patchValue({
@@ -309,17 +219,15 @@ export class Gestion implements OnInit {
     }
   }
 
-  /**
-   * Annule l'édition du restaurant
-   */
+  // Annule l'édition du restaurant
+
   annulerEditionRestaurant(): void {
     this.modeEditionRestaurant.set(false);
     this.formulaireRestaurant.reset();
   }
 
-  /**
-   * Sauvegarde les modifications du restaurant
-   */
+  // Sauvegarde les modifications du restaurant
+
   sauvegarderRestaurant(): void {
     if (this.formulaireRestaurant.invalid || !this.restaurant) {
       this.formulaireRestaurant.markAllAsTouched();
