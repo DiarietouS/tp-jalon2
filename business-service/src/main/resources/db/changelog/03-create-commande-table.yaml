@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-create-commande-table
+      author: restaurantsapp
+      changes:
+        - createTable:
+            tableName: commande
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: courriel_client
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: adresse_livraison
+                  type: VARCHAR(500)
+              - column:
+                  name: date_commande
+                  type: TIMESTAMP
+              - column:
+                  name: statut
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: montant_total
+                  type: DECIMAL(10,2)
+              - column:
+                  name: restaurant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_commande_restaurant
+                    references: restaurant(id)

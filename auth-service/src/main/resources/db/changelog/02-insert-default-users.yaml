@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-insert-default-users
+      author: restaurantsapp
+      changes:
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: Admin
+              - column:
+                  name: nom
+                  value: Système
+              - column:
+                  name: courriel
+                  value: admin@restaurants.com
+              - column:
+                  name: mot_de_passe
+                  value: "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBpwTTyU.oBQLO"
+              - column:
+                  name: role
+                  value: ADMIN
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: Restaurant
+              - column:
+                  name: nom
+                  value: Un
+              - column:
+                  name: courriel
+                  value: resto1@restaurants.com
+              - column:
+                  name: mot_de_passe
+                  value: "$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqrnV9s8R1C8E7ZCUR9E2W8kDsba"
+              - column:
+                  name: role
+                  value: RESTAURATEUR
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: Client
+              - column:
+                  name: nom
+                  value: Un
+              - column:
+                  name: courriel
+                  value: client1@restaurants.com
+              - column:
+                  name: mot_de_passe
+                  value: "$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO1sQ9GPKCO"
+              - column:
+                  name: role
+                  value: CLIENT
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: Livreur
+              - column:
+                  name: nom
+                  value: Un
+              - column:
+                  name: courriel
+                  value: livreur1@restaurants.com
+              - column:
+                  name: mot_de_passe
+                  value: "$2a$10$tKF5XFLVuB5X3FYXxaFjre/vqFrWaEX2l8jqr0PHTkKFAZ0X/hCX2"
+              - column:
+                  name: role
+                  value: LIVREUR

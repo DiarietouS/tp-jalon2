@@ -1,0 +1,131 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05-insert-default-data
+      author: restaurantsapp
+      changes:
+        - insert:
+            tableName: restaurant
+            columns:
+              - column:
+                  name: nom
+                  value: Pizza del Forno
+              - column:
+                  name: description
+                  value: Authentique cuisine italienne
+              - column:
+                  name: type_cuisine
+                  value: italienne
+              - column:
+                  name: frais_livraison
+                  valueNumeric: 3.99
+              - column:
+                  name: commande_minimum
+                  valueNumeric: 15.00
+        - insert:
+            tableName: restaurant
+            columns:
+              - column:
+                  name: nom
+                  value: Burger King
+              - column:
+                  name: description
+                  value: Burgers savoureux et rapides
+              - column:
+                  name: type_cuisine
+                  value: fast food
+              - column:
+                  name: frais_livraison
+                  valueNumeric: 2.99
+              - column:
+                  name: commande_minimum
+                  valueNumeric: 10.00
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: Pizza Margherita
+              - column:
+                  name: prix
+                  valueNumeric: 12.99
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: restaurant_id
+                  valueNumeric: 1
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: Pizza Pepperoni
+              - column:
+                  name: prix
+                  valueNumeric: 14.99
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: restaurant_id
+                  valueNumeric: 1
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Pâtes Carbonara"
+              - column:
+                  name: prix
+                  valueNumeric: 13.99
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: restaurant_id
+                  valueNumeric: 1
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: Burger Classic
+              - column:
+                  name: prix
+                  valueNumeric: 9.99
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: restaurant_id
+                  valueNumeric: 2
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: Burger Royal
+              - column:
+                  name: prix
+                  valueNumeric: 12.99
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: restaurant_id
+                  valueNumeric: 2
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: Frites
+              - column:
+                  name: prix
+                  valueNumeric: 3.99
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: restaurant_id
+                  valueNumeric: 2
