@@ -1,0 +1,11 @@
+databaseChangeLog:
+  # Fichier maître Liquibase
+  # Liste tous les changesets dans l'ordre d'exécution
+
+  - include:
+      file: db/changelog/01-create-utilisateur-table.yaml
+      relativeToChangelogFile: false
+
+  - include:
+      file: db/changelog/02-insert-default-users.yaml
+      relativeToChangelogFile: false

@@ -1,0 +1,70 @@
+databaseChangeLog:
+  # Migration 01 : Création de la table utilisateur
+  # Auteur : INF1013 Jalon 2
+
+  - changeSet:
+      id: 01-create-utilisateur-table
+      author: inf1013
+      comment: Création de la table utilisateur avec tous les champs nécessaires
+
+      changes:
+        - createTable:
+            tableName: utilisateur
+            columns:
+              # Identifiant unique auto-incrémenté
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              # Prénom de l'utilisateur
+              - column:
+                  name: prenom
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              # Nom de famille
+              - column:
+                  name: nom
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              # Adresse courriel (identifiant de connexion unique)
+              - column:
+                  name: courriel
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              # Mot de passe chiffré avec BCrypt
+              - column:
+                  name: mot_de_passe
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              # Numéro de téléphone (optionnel)
+              - column:
+                  name: telephone
+                  type: VARCHAR(20)
+
+              # Adresse postale (optionnel)
+              - column:
+                  name: adresse
+                  type: VARCHAR(500)
+
+              # Rôle de l'utilisateur : CLIENT, RESTAURATEUR, LIVREUR, ADMIN
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+      rollback:
+        - dropTable:
+            tableName: utilisateur

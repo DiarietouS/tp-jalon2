@@ -1,0 +1,69 @@
+version: '3.8'
+
+# Configuration Docker Compose pour l'environnement de développement
+# Lance PostgreSQL pour les deux microservices
+
+services:
+
+  # Base de données PostgreSQL partagée
+  postgres:
+    image: postgres:16-alpine
+    container_name: restaurants-postgres
+    environment:
+      POSTGRES_DB: restaurants
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: choupinou
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persistance des données entre les redémarrages
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d restaurants"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Microservice d'authentification (Port 8081)
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: restaurants-auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/restaurants
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: choupinou
+      JWT_SECRET: "inf1013-jalon2-cle-secrete-jwt-hmac256-restaurant-app-2024"
+      JWT_EXPIRATION: 86400000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - backend
+
+  # Microservice métier (Port 8082)
+  business-service:
+    build:
+      context: ./business-service
+      dockerfile: Dockerfile
+    container_name: restaurants-business-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/restaurants
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: choupinou
+      JWT_SECRET: "inf1013-jalon2-cle-secrete-jwt-hmac256-restaurant-app-2024"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - backend
+
+volumes:
+  # Volume nommé pour la persistance des données PostgreSQL
+  postgres_data:
+    driver: local

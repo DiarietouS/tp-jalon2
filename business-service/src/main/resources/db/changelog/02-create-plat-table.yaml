@@ -1,0 +1,62 @@
+databaseChangeLog:
+  # Migration 02 : Création de la table plat
+
+  - changeSet:
+      id: 02-create-plat-table
+      author: inf1013
+      comment: Création de la table plat avec référence au restaurant
+
+      changes:
+        - createTable:
+            tableName: plat
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: nom
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description
+                  type: TEXT
+
+              - column:
+                  name: prix
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: categorie
+                  type: VARCHAR(100)
+
+              - column:
+                  name: image_url
+                  type: VARCHAR(1000)
+
+              - column:
+                  name: disponible
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+              # Clé étrangère vers la table restaurant
+              - column:
+                  name: id_restaurant
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_plat_restaurant
+                    references: restaurant(id)
+
+      rollback:
+        - dropTable:
+            tableName: plat

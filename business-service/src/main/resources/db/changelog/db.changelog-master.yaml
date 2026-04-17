@@ -1,0 +1,27 @@
+databaseChangeLog:
+  # Fichier maître Liquibase pour le microservice métier
+  # Liste tous les changesets dans l'ordre d'exécution
+
+  - include:
+      file: db/changelog/01-create-restaurant-table.yaml
+      relativeToChangelogFile: false
+
+  - include:
+      file: db/changelog/02-create-plat-table.yaml
+      relativeToChangelogFile: false
+
+  - include:
+      file: db/changelog/03-create-commande-table.yaml
+      relativeToChangelogFile: false
+
+  - include:
+      file: db/changelog/04-create-ligne-commande-table.yaml
+      relativeToChangelogFile: false
+
+  - include:
+      file: db/changelog/05-create-livraison-table.yaml
+      relativeToChangelogFile: false
+
+  - include:
+      file: db/changelog/06-insert-default-data.yaml
+      relativeToChangelogFile: false

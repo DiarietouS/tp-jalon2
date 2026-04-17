@@ -1,0 +1,307 @@
+databaseChangeLog:
+  # Migration 06 : Insertion des données par défaut
+  # Restaurants et plats par défaut pour le développement
+
+  - changeSet:
+      id: 06-insert-default-data
+      author: inf1013
+      comment: Insertion des restaurants et plats par défaut
+
+      changes:
+        # Restaurant 1 : Pizza del Forno
+        - insert:
+            tableName: restaurant
+            columns:
+              - column:
+                  name: nom
+                  value: "Pizza del Forno"
+              - column:
+                  name: description
+                  value: "Authentiques pizzas italiennes cuites au four à bois"
+              - column:
+                  name: adresse
+                  value: "123 rue Saint-Denis, Montréal, QC H2X 3K7"
+              - column:
+                  name: localisation_texte
+                  value: "Plateau-Mont-Royal, Montréal"
+              - column:
+                  name: telephone
+                  value: "514-555-0101"
+              - column:
+                  name: courriel
+                  value: "contact@pizzadelforno.ca"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: type_cuisine
+                  value: "Italienne"
+              - column:
+                  name: note
+                  valueNumeric: 4.5
+              - column:
+                  name: temps_livraison
+                  value: "25-35"
+              - column:
+                  name: frais_livraison
+                  valueNumeric: 2.99
+              - column:
+                  name: commande_minimum
+                  valueNumeric: 15.00
+              - column:
+                  name: id_proprietaire
+                  valueNumeric: 2
+
+        # Restaurant 2 : Burger King Express
+        - insert:
+            tableName: restaurant
+            columns:
+              - column:
+                  name: nom
+                  value: "Burger King Express"
+              - column:
+                  name: description
+                  value: "Les meilleurs burgers artisanaux de Montréal"
+              - column:
+                  name: adresse
+                  value: "456 boulevard Saint-Laurent, Montréal, QC H2W 1Z5"
+              - column:
+                  name: localisation_texte
+                  value: "Mile-End, Montréal"
+              - column:
+                  name: telephone
+                  value: "514-555-0202"
+              - column:
+                  name: courriel
+                  value: "contact@burgerkingexpress.ca"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: type_cuisine
+                  value: "Burger"
+              - column:
+                  name: note
+                  valueNumeric: 4.2
+              - column:
+                  name: temps_livraison
+                  value: "20-30"
+              - column:
+                  name: frais_livraison
+                  valueNumeric: 1.99
+              - column:
+                  name: commande_minimum
+                  valueNumeric: 12.00
+              - column:
+                  name: id_proprietaire
+                  valueNumeric: 2
+
+        # Plats du restaurant Pizza del Forno (id=1)
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Pizza Margherita"
+              - column:
+                  name: description
+                  value: "Sauce tomate, mozzarella fraîche, basilic frais"
+              - column:
+                  name: prix
+                  valueNumeric: 16.99
+              - column:
+                  name: categorie
+                  value: "Pizza"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 1
+
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Pizza Pepperoni"
+              - column:
+                  name: description
+                  value: "Sauce tomate, mozzarella, pepperoni généreux"
+              - column:
+                  name: prix
+                  valueNumeric: 18.99
+              - column:
+                  name: categorie
+                  value: "Pizza"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 1
+
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Pizza Quatre Saisons"
+              - column:
+                  name: description
+                  value: "Champignons, jambon, artichauts, olives noires"
+              - column:
+                  name: prix
+                  valueNumeric: 21.99
+              - column:
+                  name: categorie
+                  value: "Pizza"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 1
+
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Tiramisu"
+              - column:
+                  name: description
+                  value: "Dessert italien classique au café et mascarpone"
+              - column:
+                  name: prix
+                  valueNumeric: 7.99
+              - column:
+                  name: categorie
+                  value: "Dessert"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 1
+
+        # Plats du restaurant Burger King Express (id=2)
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Burger Classic"
+              - column:
+                  name: description
+                  value: "Galette de bœuf 150g, laitue, tomate, oignon, ketchup"
+              - column:
+                  name: prix
+                  valueNumeric: 13.99
+              - column:
+                  name: categorie
+                  value: "Burger"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 2
+
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Burger Bacon BBQ"
+              - column:
+                  name: description
+                  value: "Galette de bœuf 200g, bacon croustillant, sauce BBQ, fromage cheddar"
+              - column:
+                  name: prix
+                  valueNumeric: 16.99
+              - column:
+                  name: categorie
+                  value: "Burger"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 2
+
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Frites Maison"
+              - column:
+                  name: description
+                  value: "Frites fraîches coupées à la main, sel de mer"
+              - column:
+                  name: prix
+                  valueNumeric: 4.99
+              - column:
+                  name: categorie
+                  value: "Accompagnement"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 2
+
+        - insert:
+            tableName: plat
+            columns:
+              - column:
+                  name: nom
+                  value: "Milkshake Vanille"
+              - column:
+                  name: description
+                  value: "Milkshake onctueux à la vanille de Madagascar"
+              - column:
+                  name: prix
+                  valueNumeric: 5.99
+              - column:
+                  name: categorie
+                  value: "Boisson"
+              - column:
+                  name: image_url
+                  value: "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=800&q=80"
+              - column:
+                  name: disponible
+                  valueBoolean: true
+              - column:
+                  name: id_restaurant
+                  valueNumeric: 2
+
+      rollback:
+        - delete:
+            tableName: plat
+            where: id_restaurant IN (1, 2)
+        - delete:
+            tableName: restaurant
+            where: id IN (1, 2)

@@ -1,5 +1,6 @@
 // Rôle de l'utilisateur dans l'application
-export type RoleUtilisateur = 'client' | 'restaurateur' | 'livreur';
+// Accepte les valeurs en minuscules (existant) et en majuscules (API Spring Boot)
+export type RoleUtilisateur = 'client' | 'restaurateur' | 'livreur' | 'CLIENT' | 'RESTAURATEUR' | 'LIVREUR' | 'ADMIN';
 
 // Modèle représentant un utilisateur (client ou restaurateur)
 export interface Utilisateur {

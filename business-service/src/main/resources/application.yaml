@@ -1,0 +1,41 @@
+# Configuration du microservice métier
+# Port : 8082
+
+server:
+  port: 8082
+
+spring:
+  application:
+    name: business-service
+
+  # Configuration de la base de données PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/restaurants
+    username: postgres
+    password: choupinou
+    driver-class-name: org.postgresql.Driver
+
+  # Configuration JPA / Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Configuration Liquibase
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+
+# Configuration JWT (même clé que l'auth-service pour la validation)
+jwt:
+  secret: "inf1013-jalon2-cle-secrete-jwt-hmac256-restaurant-app-2024"
+
+# Configuration des logs
+logging:
+  level:
+    com.restaurants.business: DEBUG
+    org.springframework.security: INFO

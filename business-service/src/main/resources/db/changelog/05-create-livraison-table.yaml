@@ -1,0 +1,62 @@
+databaseChangeLog:
+  # Migration 05 : Création de la table livraison
+
+  - changeSet:
+      id: 05-create-livraison-table
+      author: inf1013
+      comment: Création de la table livraison
+
+      changes:
+        - createTable:
+            tableName: livraison
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              # Clé étrangère vers la table commande (relation 1:1)
+              - column:
+                  name: id_commande
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+                    foreignKeyName: fk_livraison_commande
+                    references: commande(id)
+
+              # Référence au livreur dans auth-service
+              - column:
+                  name: id_livreur
+                  type: BIGINT
+
+              - column:
+                  name: adresse_livraison
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+
+              # Statuts : EN_ATTENTE, EN_COURS, LIVREE, ANNULEE
+              - column:
+                  name: statut
+                  type: VARCHAR(20)
+                  defaultValue: "EN_ATTENTE"
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: cree_le
+                  type: TIMESTAMP
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: livre_le
+                  type: TIMESTAMP
+
+      rollback:
+        - dropTable:
+            tableName: livraison

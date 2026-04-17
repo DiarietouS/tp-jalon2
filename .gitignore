@@ -60,3 +60,22 @@ node_modules/
 
 
 .dataconnect
+
+# Maven / Spring Boot build artifacts
+target/
+*.jar
+*.war
+*.ear
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Angular build output
+INF1013/dist/
+*.iml
+.idea/
+
+# Eclipse
+.settings/
+.project
+.classpath
+

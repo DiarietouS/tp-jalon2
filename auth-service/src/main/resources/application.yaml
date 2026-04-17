@@ -1,0 +1,44 @@
+# Configuration du microservice d'authentification
+# Port : 8081
+
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+
+  # Configuration de la base de données PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/restaurants
+    username: postgres
+    password: choupinou
+    driver-class-name: org.postgresql.Driver
+
+  # Configuration JPA / Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Configuration Liquibase pour les migrations de base de données
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+
+# Configuration JWT
+jwt:
+  # Clé secrète pour signer les jetons (au moins 256 bits = 32 caractères)
+  secret: "inf1013-jalon2-cle-secrete-jwt-hmac256-restaurant-app-2024"
+  # Durée d'expiration : 24 heures en millisecondes
+  expiration: 86400000
+
+# Configuration des logs
+logging:
+  level:
+    com.restaurants.auth: DEBUG
+    org.springframework.security: INFO

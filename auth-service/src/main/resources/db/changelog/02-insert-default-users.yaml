@@ -1,0 +1,120 @@
+databaseChangeLog:
+  # Migration 02 : Insertion des utilisateurs par défaut
+  # Les mots de passe sont chiffrés avec BCrypt (mot de passe : "password123")
+  # Hash BCrypt généré pour "password123"
+
+  - changeSet:
+      id: 02-insert-default-users
+      author: inf1013
+      comment: Insertion des utilisateurs par défaut pour le développement et les tests
+
+      changes:
+        # Administrateur du système
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: "Admin"
+              - column:
+                  name: nom
+                  value: "Système"
+              - column:
+                  name: courriel
+                  value: "admin@restaurants.com"
+              - column:
+                  # BCrypt de "password123"
+                  name: mot_de_passe
+                  value: "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6TBBO"
+              - column:
+                  name: telephone
+                  value: "514-000-0000"
+              - column:
+                  name: adresse
+                  value: "1000 rue Admin, Montréal, QC"
+              - column:
+                  name: role
+                  value: "ADMIN"
+
+        # Restaurateur - Propriétaire du restaurant Pizza del Forno
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: "Jean"
+              - column:
+                  name: nom
+                  value: "Tremblay"
+              - column:
+                  name: courriel
+                  value: "resto1@restaurants.com"
+              - column:
+                  name: mot_de_passe
+                  value: "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6TBBO"
+              - column:
+                  name: telephone
+                  value: "514-111-1111"
+              - column:
+                  name: adresse
+                  value: "123 rue Saint-Denis, Montréal, QC"
+              - column:
+                  name: role
+                  value: "RESTAURATEUR"
+
+        # Client régulier
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: "Marie"
+              - column:
+                  name: nom
+                  value: "Dupont"
+              - column:
+                  name: courriel
+                  value: "client1@restaurants.com"
+              - column:
+                  name: mot_de_passe
+                  value: "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6TBBO"
+              - column:
+                  name: telephone
+                  value: "514-222-2222"
+              - column:
+                  name: adresse
+                  value: "456 avenue du Parc, Montréal, QC"
+              - column:
+                  name: role
+                  value: "CLIENT"
+
+        # Livreur
+        - insert:
+            tableName: utilisateur
+            columns:
+              - column:
+                  name: prenom
+                  value: "Pierre"
+              - column:
+                  name: nom
+                  value: "Martin"
+              - column:
+                  name: courriel
+                  value: "livreur1@restaurants.com"
+              - column:
+                  name: mot_de_passe
+                  value: "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6TBBO"
+              - column:
+                  name: telephone
+                  value: "514-333-3333"
+              - column:
+                  name: adresse
+                  value: "789 boulevard Rosemont, Montréal, QC"
+              - column:
+                  name: role
+                  value: "LIVREUR"
+
+      rollback:
+        - delete:
+            tableName: utilisateur
+            where: courriel IN ('admin@restaurants.com', 'resto1@restaurants.com', 'client1@restaurants.com', 'livreur1@restaurants.com')
