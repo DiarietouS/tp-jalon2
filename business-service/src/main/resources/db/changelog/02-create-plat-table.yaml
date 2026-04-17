@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-create-plat-table
+      author: restaurantsapp
+      changes:
+        - createTable:
+            tableName: plat
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: prix
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disponible
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: restaurant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_plat_restaurant
+                    references: restaurant(id)
