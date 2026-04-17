@@ -52,13 +52,13 @@ databaseChangeLog:
                   name: id_proprietaire
                   valueNumeric: 2
 
-        # Restaurant 2 : Burger King Express
+        # Restaurant 2 : Le Burger Montréalais
         - insert:
             tableName: restaurant
             columns:
               - column:
                   name: nom
-                  value: "Burger King Express"
+                  value: "Le Burger Montréalais"
               - column:
                   name: description
                   value: "Les meilleurs burgers artisanaux de Montréal"
@@ -73,7 +73,7 @@ databaseChangeLog:
                   value: "514-555-0202"
               - column:
                   name: courriel
-                  value: "contact@burgerkingexpress.ca"
+                  value: "contact@leburgermontreal.ca"
               - column:
                   name: image_url
                   value: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"

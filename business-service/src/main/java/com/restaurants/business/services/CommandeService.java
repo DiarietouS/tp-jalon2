@@ -35,7 +35,7 @@ public class CommandeService {
      */
     @Transactional(readOnly = true)
     public List<CommandeDTO> obtenirCommandesParClient(Long idClient) {
-        return commandeRepository.findByIdClientOrderByCreeLEDesc(idClient)
+        return commandeRepository.findByIdClientOrderByCreeLe_Desc(idClient)
                 .stream()
                 .map(CommandeDTO::depuisEntite)
                 .collect(Collectors.toList());
@@ -49,7 +49,7 @@ public class CommandeService {
      */
     @Transactional(readOnly = true)
     public List<CommandeDTO> obtenirCommandesParRestaurant(Long idRestaurant) {
-        return commandeRepository.findByIdRestaurantOrderByCreeLEDesc(idRestaurant)
+        return commandeRepository.findByIdRestaurantOrderByCreeLe_Desc(idRestaurant)
                 .stream()
                 .map(CommandeDTO::depuisEntite)
                 .collect(Collectors.toList());

@@ -18,7 +18,7 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
      * @param idClient l'identifiant du client
      * @return la liste des commandes
      */
-    List<Commande> findByIdClientOrderByCreeLEDesc(Long idClient);
+    List<Commande> findByIdClientOrderByCreeLe_Desc(Long idClient);
 
     /**
      * Recherche les commandes d'un restaurant.
@@ -26,7 +26,7 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
      * @param idRestaurant l'identifiant du restaurant
      * @return la liste des commandes
      */
-    List<Commande> findByIdRestaurantOrderByCreeLEDesc(Long idRestaurant);
+    List<Commande> findByIdRestaurantOrderByCreeLe_Desc(Long idRestaurant);
 
     /**
      * Recherche les commandes par statut.
