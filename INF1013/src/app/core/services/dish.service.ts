@@ -1,124 +1,132 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of, map, tap } from 'rxjs';
+import { Observable, catchError, of, map, switchMap, tap } from 'rxjs';
 import { Plat } from '../models/dish';
 
 @Injectable({ providedIn: 'root' })
 export class DishesService {
-
-  private readonly url = 'assets/mock/dishes.json';
+  /** URL du business-service */
+  private readonly BUSINESS_URL = 'http://localhost:8082/api/plats';
+  /** Fallback mock local */
+  private readonly mockUrl = 'assets/mock/dishes.json';
   private readonly storageKey = 'INF1013_dishes';
+  private readonly storageVersionKey = 'INF1013_dishes_version';
+  private readonly storageVersion = '2026-04-27-v1';
 
-  private plats: Plat[] = []; // stockage en mémoire seulement
+  private plats: Plat[] = [];
   private charge = false;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {
+    this.assurerVersionCache();
+  }
 
+  /**
+   * Charge tous les plats depuis le business-service.
+   * Repli sur localStorage, puis mock JSON si indisponible.
+   */
   chargerPlats(): Observable<Plat[]> {
+    if (this.charge) return of(this.plats);
 
-    // si déjà chargé en mémoire
-    if (this.charge) {
-      return of(this.plats);
-    }
+    return this.http.get<Plat[]>(this.BUSINESS_URL).pipe(
+      switchMap(plats => {
+        if (plats && plats.length > 0) {
+          this.plats = plats;
+          this.charge = true;
+          this.ecrireDansStorage(this.plats);
+          return of(this.plats);
+        }
+        return this.chargerDepuisCache();
+      }),
+      catchError(() => this.chargerDepuisCache())
+    );
+  }
 
-    // priorité au localStorage (persistance pour la démo)
+  private chargerDepuisCache(): Observable<Plat[]> {
     const cache = this.lireDepuisStorage();
-    if (cache.length) {
+    if (cache.length > 0) {
       this.plats = cache;
       this.charge = true;
       return of(this.plats);
     }
 
-    // sinon on charge depuis le fichier JSON
-    return this.http.get<any[]>(this.url).pipe(
-      map((data) => (data ?? []).map(d => this.convertirPlat(d))),
-      tap((data) => {
+    return this.http.get<any[]>(this.mockUrl).pipe(
+      map(data => (data ?? []).map(d => this.convertirPlat(d))),
+      tap(data => {
         this.plats = data;
         this.charge = true;
         this.ecrireDansStorage(this.plats);
       }),
-      catchError(() => {
-        this.plats = [];
-        this.charge = true;
-        return of([]);
-      })
+      catchError(() => { this.plats = []; this.charge = true; return of([]); })
     );
   }
 
-  // Alias pour compatibilité
-  loadDishes(): Observable<Plat[]> {
-    return this.chargerPlats();
-  }
+  loadDishes(): Observable<Plat[]> { return this.chargerPlats(); }
+
+  getPlats(): Plat[] { return this.plats; }
+  getDishes(): Plat[] { return this.plats; }
 
   /**
-   * Convertit un plat du format anglais vers français
+   * Ajoute un plat via POST /api/plats.
+   * Repli local si indisponible.
    */
-  private convertirPlat(d: any): Plat {
-    return {
-      id: d.id,
-      nom: d.name,
-      description: d.description,
-      prix: d.price,
-      categorie: d.category,
-      imageUrl: d.imageUrl,
-      disponible: d.available,
-      idRestaurant: d.restaurantId
-    };
-  }
-
-  getPlats(): Plat[] {
-    return this.plats;
-  }
-
-  // Alias pour compatibilité
-  getDishes(): Plat[] {
-    return this.getPlats();
-  }
-
   ajouterPlat(nouveauPlat: Plat): Observable<Plat[]> {
-    return this.chargerPlats().pipe(
-      map((liste) => {
-        this.plats = [...liste, nouveauPlat];
+    return this.http.post<Plat>(this.BUSINESS_URL, nouveauPlat).pipe(
+      tap(created => {
+        this.plats = [...this.plats, created];
         this.ecrireDansStorage(this.plats);
-        return this.plats;
+      }),
+      map(() => this.plats),
+      catchError(() => {
+        this.plats = [...this.plats, nouveauPlat];
+        this.ecrireDansStorage(this.plats);
+        return of(this.plats);
       })
     );
   }
 
-  // Alias pour compatibilité
-  addDish(newDish: Plat): Observable<Plat[]> {
-    return this.ajouterPlat(newDish);
-  }
+  addDish(newDish: Plat): Observable<Plat[]> { return this.ajouterPlat(newDish); }
 
+  /**
+   * Supprime un plat via DELETE /api/plats/{id}.
+   * Repli local si indisponible.
+   */
   supprimerPlat(id: number): Observable<Plat[]> {
-    return this.chargerPlats().pipe(
-      map((liste) => {
-        this.plats = liste.filter((p) => p.id !== id);
+    return this.http.delete<void>(`${this.BUSINESS_URL}/${id}`).pipe(
+      tap(() => {
+        this.plats = this.plats.filter(p => p.id !== id);
         this.ecrireDansStorage(this.plats);
-        return this.plats;
+      }),
+      map(() => this.plats),
+      catchError(() => {
+        this.plats = this.plats.filter(p => p.id !== id);
+        this.ecrireDansStorage(this.plats);
+        return of(this.plats);
       })
     );
   }
 
-  // Alias pour compatibilité
-  deleteDish(id: number): Observable<Plat[]> {
-    return this.supprimerPlat(id);
-  }
+  deleteDish(id: number): Observable<Plat[]> { return this.supprimerPlat(id); }
 
+  /**
+   * Met Ã  jour un plat via PUT /api/plats/{id}.
+   * Repli local si indisponible.
+   */
   mettreAJourPlat(platModifie: Plat): Observable<Plat[]> {
-    return this.chargerPlats().pipe(
-      map((liste) => {
-        this.plats = liste.map((p) => (p.id === platModifie.id ? platModifie : p));
+    return this.http.put<Plat>(`${this.BUSINESS_URL}/${platModifie.id}`, platModifie).pipe(
+      tap(updated => {
+        this.plats = this.plats.map(p => p.id === updated.id ? updated : p);
         this.ecrireDansStorage(this.plats);
-        return this.plats;
+      }),
+      map(() => this.plats),
+      catchError(() => {
+        this.plats = this.plats.map(p => p.id === platModifie.id ? platModifie : p);
+        this.ecrireDansStorage(this.plats);
+        return of(this.plats);
       })
     );
   }
 
-  // Alias pour compatibilité
-  updateDish(updated: Plat): Observable<Plat[]> {
-    return this.mettreAJourPlat(updated);
-  }
+  updateDish(updated: Plat): Observable<Plat[]> { return this.mettreAJourPlat(updated); }
 
   reinitialiserDepuisJson(): Observable<Plat[]> {
     this.charge = false;
@@ -127,28 +135,43 @@ export class DishesService {
     return this.chargerPlats();
   }
 
+  resetToJson(): Observable<Plat[]> { return this.reinitialiserDepuisJson(); }
+
+  private convertirPlat(d: any): Plat {
+    return {
+      id: d.id,
+      nom: d.name || d.nom,
+      description: d.description,
+      prix: d.price ?? d.prix,
+      categorie: d.category || d.categorie,
+      imageUrl: d.imageUrl,
+      disponible: d.available ?? d.disponible,
+      idRestaurant: d.restaurantId || d.idRestaurant
+    };
+  }
+
   private lireDepuisStorage(): Plat[] {
     try {
       const raw = localStorage.getItem(this.storageKey);
       if (!raw) return [];
       const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return [];
-      return parsed as Plat[];
-    } catch {
-      return [];
-    }
+      return Array.isArray(parsed) ? parsed as Plat[] : [];
+    } catch { return []; }
   }
 
   private ecrireDansStorage(liste: Plat[]): void {
+    try { localStorage.setItem(this.storageKey, JSON.stringify(liste)); } catch {}
+  }
+
+  private assurerVersionCache(): void {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(liste));
+      const version = localStorage.getItem(this.storageVersionKey);
+      if (version !== this.storageVersion) {
+        localStorage.removeItem(this.storageKey);
+        localStorage.setItem(this.storageVersionKey, this.storageVersion);
+      }
     } catch {
       // ignore
     }
-  }
-
-  // Alias pour compatibilité
-  resetToJson(): Observable<Plat[]> {
-    return this.reinitialiserDepuisJson();
   }
 }

@@ -27,6 +27,7 @@ import { Plat } from '../models/dish';
  */
 @Injectable({ providedIn: 'root' })
 export class CartService {
+  private readonly storageKey = 'INF1013_cart';
   
   /**
    * Signal mutable pour l'état du panier
@@ -86,6 +87,10 @@ export class CartService {
   get itemCount(): number { return this.nombreArticles(); }
   get subtotal(): number { return this.sousTotal(); }
 
+  constructor() {
+    this.restaurerPanier();
+  }
+
   /**
    * Ajoute un plat au panier
    * 
@@ -124,6 +129,7 @@ export class CartService {
         };
       }
     });
+    this.sauvegarderPanier();
   }
 
   // Alias pour compatibilité
@@ -152,6 +158,7 @@ export class CartService {
         )
       };
     });
+    this.sauvegarderPanier();
   }
 
   // Alias pour compatibilité
@@ -175,6 +182,7 @@ export class CartService {
 
       return { ...panier, articles: articlesRestants };
     });
+    this.sauvegarderPanier();
   }
 
   // Alias pour compatibilité
@@ -189,10 +197,38 @@ export class CartService {
    */
   viderPanier(): void {
     this._panier.set(null);
+    this.sauvegarderPanier();
   }
 
   // Alias pour compatibilité
   clearCart(): void {
     this.viderPanier();
+  }
+
+  private restaurerPanier(): void {
+    try {
+      const raw = localStorage.getItem(this.storageKey);
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as PanierModel | null;
+      this._panier.set(parsed);
+    } catch {
+      this._panier.set(null);
+    }
+  }
+
+  private sauvegarderPanier(): void {
+    try {
+      const panier = this._panier();
+      if (panier) {
+        localStorage.setItem(this.storageKey, JSON.stringify(panier));
+      } else {
+        localStorage.removeItem(this.storageKey);
+      }
+    } catch {
+      // ignore
+    }
   }
 }

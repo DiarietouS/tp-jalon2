@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild, ElementRef, computed, output, signal, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 // Angular Material
@@ -66,7 +66,7 @@ export class Header implements AfterViewInit, OnDestroy {
    */
   adresseLivraison: Signal<string> = computed(() => {
     const utilisateur = this.serviceAuth.utilisateurCourant();
-    return utilisateur?.adresse || 'Trois-Rivières, QC';
+    return utilisateur?.adresse?.trim() || 'Trois-Rivières, QC';
   });
 
   /**
@@ -95,7 +95,10 @@ export class Header implements AfterViewInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
 
-  constructor(public serviceAuth: AuthService) {}
+  constructor(
+    public serviceAuth: AuthService,
+    private readonly router: Router
+  ) {}
 
   /**
    * COURS INF1013 - Observables (fromEvent + pipe)
@@ -125,5 +128,8 @@ export class Header implements AfterViewInit, OnDestroy {
    */
   deconnecter(): void {
     this.serviceAuth.deconnexion();
+    this.texteRecherche.set('');
+    this.rechercheChange.emit('');
+    this.router.navigate(['/auth']);
   }
 }

@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-plats-table
+      author: tp-jalon1
+      changes:
+        - createTable:
+            tableName: plats
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(1000)
+              - column:
+                  name: prix
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+              - column:
+                  name: categorie
+                  type: VARCHAR(100)
+              - column:
+                  name: image_url
+                  type: VARCHAR(1000)
+              - column:
+                  name: disponible
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: id_restaurant
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_plat_restaurant
+                    references: restaurants(id)
+      rollback:
+        - dropTable:
+            tableName: plats

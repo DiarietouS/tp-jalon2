@@ -43,8 +43,8 @@ export class Gestion implements OnInit {
 
   ongletActif = signal<number>(0);
 
-
   plats: Plat[] = [];
+  private tousLesPlats: Plat[] = [];
   categories = ['Entrées', 'Plats principaux', 'Desserts', 'Boissons', 'Accompagnements'];
 
 
@@ -103,10 +103,11 @@ export class Gestion implements OnInit {
     this.enChargement.set(true);
     this.messageErreur.set(null);
 
-    // Charger les plats
+    // Charger tous les plats (seront filtrés après avoir trouvé le restaurant)
     this.platsService.chargerPlats().subscribe({
       next: (data) => {
-        this.plats = data;
+        this.tousLesPlats = data;
+        this.plats = this.filtrerPlatsParRestaurant(data);
         this.cdr.detectChanges();
       },
       error: () => {
@@ -118,19 +119,27 @@ export class Gestion implements OnInit {
     // Charger le restaurant du restaurateur connecté
     this.restaurantService.loadRestaurants().subscribe({
       next: (liste) => {
-        // Récupérer l'utilisateur connecté (restaurateur)
         const utilisateur = this.authService.utilisateurCourant();
 
         if (utilisateur && utilisateur.role === 'restaurateur') {
-          // Filtrer pour trouver le restaurant dont l'idProprietaire correspond à l'ID du restaurateur
           this.restaurant = liste.find(r => r.idProprietaire === utilisateur.id) || null;
         } else {
           this.restaurant = null;
         }
 
-        if (!this.restaurant) {
-          this.messageErreur.set('Aucun restaurant associé à votre compte.');
+        // Re-filtrer les plats maintenant que le restaurant est connu
+        this.plats = this.filtrerPlatsParRestaurant(this.tousLesPlats);
+
+        // Pré-remplir le formulaire avec les données du profil si pas encore de restaurant
+        if (!this.restaurant && utilisateur) {
+          this.formulaireRestaurant.patchValue({
+            nom: `Restaurant de ${utilisateur.prenom}`,
+            courriel: utilisateur.courriel || '',
+            telephone: utilisateur.telephone || '',
+            adresse: utilisateur.adresse || '',
+          });
         }
+
         this.enChargement.set(false);
         this.cdr.detectChanges();
       },
@@ -140,6 +149,11 @@ export class Gestion implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  private filtrerPlatsParRestaurant(plats: Plat[]): Plat[] {
+    if (!this.restaurant) return [];
+    return plats.filter(p => p.idRestaurant === this.restaurant!.id);
   }
 
 
@@ -174,7 +188,8 @@ export class Gestion implements OnInit {
 
     this.platsService.ajouterPlat(nouveauPlat).subscribe({
       next: (liste) => {
-        this.plats = liste;
+        this.tousLesPlats = liste;
+        this.plats = this.filtrerPlatsParRestaurant(liste);
         this.formulairePlat.reset({ disponible: true });
         this.notification.afficherSucces('Plat ajouté avec succès');
         this.cdr.detectChanges();
@@ -191,7 +206,8 @@ export class Gestion implements OnInit {
   supprimerPlat(id: number): void {
     this.platsService.supprimerPlat(id).subscribe({
       next: (liste) => {
-        this.plats = liste;
+        this.tousLesPlats = liste;
+        this.plats = this.filtrerPlatsParRestaurant(liste);
         this.notification.afficher('Plat supprimé');
         this.cdr.detectChanges();
       },
@@ -224,6 +240,43 @@ export class Gestion implements OnInit {
   annulerEditionRestaurant(): void {
     this.modeEditionRestaurant.set(false);
     this.formulaireRestaurant.reset();
+  }
+
+  creerRestaurant(): void {
+    if (this.formulaireRestaurant.invalid) {
+      this.formulaireRestaurant.markAllAsTouched();
+      return;
+    }
+    const utilisateur = this.authService.utilisateurCourant();
+    if (!utilisateur) return;
+
+    const valeurs = this.formulaireRestaurant.getRawValue();
+    this.restaurantService.creerRestaurant({
+      idProprietaire: utilisateur.id,
+      nom: valeurs.nom,
+      adresse: valeurs.adresse,
+      localisationTexte: valeurs.adresse,
+      telephone: valeurs.telephone,
+      courriel: valeurs.courriel,
+      typeCuisine: valeurs.typeCuisine || 'Autre',
+      imageUrl: valeurs.imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=60',
+      tempsLivraison: String(valeurs.tempsLivraison || 30),
+      fraisLivraison: valeurs.fraisLivraison ?? 0,
+      commandeMinimum: 0,
+      note: 0,
+    }).subscribe({
+      next: (restaurant) => {
+        this.restaurant = restaurant;
+        this.plats = [];
+        this.formulaireRestaurant.reset();
+        this.notification.afficherSucces('Restaurant créé avec succès !');
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.messageErreur.set("Erreur lors de la création du restaurant.");
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // Sauvegarde les modifications du restaurant

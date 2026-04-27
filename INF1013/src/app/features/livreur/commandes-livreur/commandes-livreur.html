@@ -16,25 +16,25 @@
           <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
         </div>
       } @else {
-        @if (commandes().length === 0) {
+        @if (livraisons().length === 0) {
           <div class="empty">
             <mat-icon>check_circle</mat-icon>
             Aucune commande à livrer.
           </div>
         } @else {
           <mat-list>
-            @for (c of commandes(); track c.id) {
+            @for (l of livraisons(); track l.id) {
               <mat-list-item>
                 <div matListItemTitle>
-                  Commande #{{ c.id }} — {{ c.nomRestaurant }}
+                  Livraison #{{ l.id }} — {{ l.client }}
                 </div>
                 <div matListItemLine>
-                  {{ c.adresseLivraison }} • {{ c.telephone }}
+                  {{ l.adresse }} • {{ l.telephone }}
                 </div>
                 <div matListItemLine>
                   <mat-chip-set>
-                    <mat-chip>{{ etiquetteStatut(c.statut) }}</mat-chip>
-                    <mat-chip>Total: {{ c.total | number:'1.2-2' }} $</mat-chip>
+                    <mat-chip>{{ etiquetteStatut(l.statut) }}</mat-chip>
+                    <mat-chip>Total: {{ totalLivraison(l) | number:'1.2-2' }} $</mat-chip>
                   </mat-chip-set>
                 </div>
 
@@ -42,7 +42,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    (click)="fermerCommande(c)"
+                    (click)="fermerCommande(l)"
                   >
                     <mat-icon>done</mat-icon>
                     Fermer (livrée)

@@ -87,6 +87,17 @@ export class RestaurantMenu implements OnInit, OnDestroy {
     return this.plats.filter(p => p.categorie === categorie);
   }
 
+  get nombrePlatsDisponibles(): number {
+    return this.plats.filter(p => p.disponible).length;
+  }
+
+  formatTempsLivraison(temps: string | null | undefined): string {
+    if (!temps) return '-';
+    const valeur = temps.trim();
+    if (valeur.toLowerCase().includes('min')) return valeur;
+    return `${valeur} min`;
+  }
+
   // Ajoute un plat au panier
 
   ajouterAuPanier(plat: Plat): void {

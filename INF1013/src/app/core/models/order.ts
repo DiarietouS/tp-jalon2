@@ -5,7 +5,8 @@ export type StatutCommande =
   | 'enPreparation'  // En préparation
   | 'prete'          // Prête pour livraison
   | 'enLivraison'    // En cours de livraison
-  | 'livree';        // Livrée au client
+  | 'livree'         // Livrée au client
+  | 'annulee';       // Annulée
 
 // Un plat commandé avec quantité et prix
 export interface ArticleCommande {

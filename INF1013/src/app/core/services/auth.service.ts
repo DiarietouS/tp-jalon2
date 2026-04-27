@@ -1,9 +1,26 @@
 import { Injectable, signal, computed, WritableSignal, Signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Utilisateur } from '../models';
 import { RestaurantService } from './restaurant.service';
+
+/** Réponse renvoyée par auth-service lors de /signin ou /signup */
+interface AuthBackendResponse {
+  token: string;
+  id: number;
+  courriel: string;
+  prenom: string;
+  nom: string;
+  role: string;
+}
+
+/** Réponse de /mot-de-passe-oublie */
+export interface MotDePasseOubliResponse {
+  message: string;
+  jeton: string | null;   // null si courriel inconnu (sécurité)
+  expireLe: string | null;
+}
 
 /**
  * ============================================================================
@@ -65,6 +82,9 @@ export class AuthService {
     return user ? user.role : null;
   });
 
+  // URL de base du backend auth-service (COURS INF1013: HttpClient)
+  private readonly AUTH_BASE_URL = 'http://localhost:8081/api/auth';
+
   // Liste des utilisateurs mock
   private utilisateurs: Utilisateur[] = [];
 
@@ -92,7 +112,9 @@ export class AuthService {
     }
 
     // 2) Sinon charger depuis le JSON et persister
-    this.http.get<any[]>('assets/mock/users.json').subscribe(users => {
+    this.http.get<any[]>('assets/mock/users.json').pipe(
+      catchError(() => of([]))
+    ).subscribe(users => {
       this.utilisateurs = (users ?? []).map(u => ({
         id: u.id,
         courriel: u.email,
@@ -116,27 +138,40 @@ export class AuthService {
   private verifierUtilisateurStocke(): void {
     const stocke = localStorage.getItem('utilisateurCourant');
     if (stocke) {
-      this._utilisateurCourant.set(JSON.parse(stocke));
+      const utilisateur = JSON.parse(stocke) as Utilisateur;
+      this._utilisateurCourant.set(utilisateur);
+      this.synchroniserUtilisateurDansStorage(utilisateur);
     }
   }
 
   /**
-   * Connexion d'un utilisateur
-   * @param courriel - Email de l'utilisateur
-   * @param motDePasse - Mot de passe
-   * @returns Observable avec l'utilisateur ou erreur
+   * Connexion d'un utilisateur.
+   * COURS INF1013 (HttpClient): essaie d'abord le backend auth-service,
+   * avec repli automatique sur les données mock via catchError.
    */
   connexion(courriel: string, motDePasse: string): Observable<Utilisateur | null> {
-    // Si les utilisateurs ne sont pas encore chargés, les charger d'abord
+    return this.http.post<AuthBackendResponse>(`${this.AUTH_BASE_URL}/signin`, { courriel, motDePasse }).pipe(
+      tap(response => localStorage.setItem('jwtToken', response.token)),
+      map(response => {
+        const base = this.utilisateurDepuisReponseAuth(response);
+        const local = this.lireUtilisateursDepuisStorage().find(u => u.courriel === base.courriel);
+        return { ...base, telephone: local?.telephone || '', adresse: local?.adresse || '', favoris: local?.favoris || [] };
+      }),
+      tap(utilisateur => this.persistUtilisateurCourant(utilisateur)),
+      catchError(() => this.connexionMock(courriel, motDePasse))
+    );
+  }
+
+  /** Repli mock si le backend est indisponible */
+  private connexionMock(courriel: string, motDePasse: string): Observable<Utilisateur | null> {
     if (this.utilisateurs.length === 0) {
-      // Essayer localStorage en premier
       const cache = this.lireUtilisateursDepuisStorage();
       if (cache.length) {
         this.utilisateurs = cache;
         return this.trouverEtConnecterUtilisateur(courriel, motDePasse);
       }
-
       return this.http.get<any[]>('assets/mock/users.json').pipe(
+        catchError(() => of([])),
         switchMap(users => {
           this.utilisateurs = users.map(u => ({
             id: u.id,
@@ -173,8 +208,7 @@ export class AuthService {
     
     if (utilisateur) {
       // Stocker l'utilisateur connecté
-      localStorage.setItem('utilisateurCourant', JSON.stringify(utilisateur));
-      this._utilisateurCourant.set(utilisateur);
+      this.persistUtilisateurCourant(utilisateur);
       return of(utilisateur);
     } else {
       return of(null);
@@ -182,12 +216,51 @@ export class AuthService {
   }
 
   /**
-   * Inscription d'un nouvel utilisateur
-   * @param donnees - Données de l'utilisateur
-   * @returns Observable avec le nouvel utilisateur
+   * Inscription d'un nouvel utilisateur.
+   * COURS INF1013 (HttpClient): essaie d'abord POST /api/auth/signup,
+   * avec repli automatique vers l'inscription mock.
    */
   inscription(donnees: Partial<Utilisateur>): Observable<Utilisateur> {
-    // Créer un nouvel utilisateur avec un ID unique
+    return this.http.post<AuthBackendResponse>(`${this.AUTH_BASE_URL}/signup`, {
+      prenom: donnees.prenom || '',
+      nom: donnees.nom || '',
+      courriel: donnees.courriel || '',
+      motDePasse: donnees.motDePasse || '',
+      telephone: donnees.telephone || '',
+      adresse: donnees.adresse || '',
+      role: donnees.role || 'client'
+    }).pipe(
+      tap(response => localStorage.setItem('jwtToken', response.token)),
+      map(response => {
+        const base = this.utilisateurDepuisReponseAuth(response);
+        // Préserver TOUS les champs du formulaire (le backend ne renvoie pas motDePasse/telephone/adresse)
+        return {
+          ...base,
+          motDePasse: donnees.motDePasse || '',
+          telephone: donnees.telephone || '',
+          adresse: donnees.adresse || '',
+          role: (donnees.role as Utilisateur['role']) || base.role
+        };
+      }),
+      tap(utilisateur => this.persistUtilisateurCourant(utilisateur)),
+      switchMap(utilisateur => {
+        if (utilisateur.role === 'restaurateur') {
+          return this.restaurantService.creerRestaurantPourProprietaire({
+            idProprietaire: utilisateur.id,
+            courriel: utilisateur.courriel,
+            telephone: utilisateur.telephone,
+            adresse: utilisateur.adresse,
+            nom: `Restaurant de ${utilisateur.prenom}`,
+          }).pipe(map(() => utilisateur));
+        }
+        return of(utilisateur);
+      }),
+      catchError(() => this.inscriptionMock(donnees))
+    );
+  }
+
+  /** Repli mock si le backend est indisponible */
+  private inscriptionMock(donnees: Partial<Utilisateur>): Observable<Utilisateur> {
     const nouvelUtilisateur: Utilisateur = {
       id: this.genererIdUnique(),
       prenom: donnees.prenom || '',
@@ -199,19 +272,10 @@ export class AuthService {
       role: donnees.role || 'client',
       favoris: []
     };
-
-    // Ajouter à la liste locale (en vrai, ça irait au serveur)
     this.utilisateurs.push(nouvelUtilisateur);
     this.ecrireUtilisateursDansStorage(this.utilisateurs);
-    
-    // Connecter automatiquement après inscription
-    // COURS INF1013: Utilise set() pour définir la valeur du signal
-    localStorage.setItem('utilisateurCourant', JSON.stringify(nouvelUtilisateur));
-    this._utilisateurCourant.set(nouvelUtilisateur);
-
-    // Si c'est un restaurateur: créer automatiquement un restaurant associé
+    this.persistUtilisateurCourant(nouvelUtilisateur);
     if (nouvelUtilisateur.role === 'restaurateur') {
-      // Charger d'abord la liste (cache/storage), puis ajouter
       this.restaurantService.loadRestaurants().subscribe(() => {
         this.restaurantService.creerRestaurantPourProprietaire({
           idProprietaire: nouvelUtilisateur.id,
@@ -222,8 +286,22 @@ export class AuthService {
         }).subscribe();
       });
     }
-    
     return of(nouvelUtilisateur);
+  }
+
+  /** Construit un Utilisateur depuis la réponse du backend auth-service */
+  private utilisateurDepuisReponseAuth(response: AuthBackendResponse): Utilisateur {
+    return {
+      id: response.id,
+      courriel: response.courriel,
+      motDePasse: '',
+      prenom: response.prenom,
+      nom: response.nom,
+      telephone: '',
+      adresse: '',
+      role: response.role as Utilisateur['role'],
+      favoris: []
+    };
   }
 
   private lireUtilisateursDepuisStorage(): Utilisateur[] {
@@ -260,12 +338,36 @@ export class AuthService {
   }
 
   /**
+   * Demande un token de réinitialisation de mot de passe.
+   * COURS INF1013 (HttpClient): POST vers auth-service,
+   * retourne le token (dev) ou un message générique (courriel inconnu).
+   */
+  motDePasseOubli(courriel: string): Observable<MotDePasseOubliResponse> {
+    return this.http.post<MotDePasseOubliResponse>(
+      `${this.AUTH_BASE_URL}/mot-de-passe-oublie`,
+      { courriel }
+    );
+  }
+
+  /**
+   * Réinitialise le mot de passe avec le token reçu.
+   * COURS INF1013 (HttpClient): POST avec {jeton, nouveauMotDePasse}.
+   */
+  reinitialiserMotDePasse(jeton: string, nouveauMotDePasse: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.AUTH_BASE_URL}/reinitialiser-mot-de-passe`,
+      { jeton, nouveauMotDePasse }
+    );
+  }
+
+  /**
    * Déconnexion
    * 
    * COURS INF1013: "this.count.set(3)" - utilise set() pour la déconnexion
    */
   deconnexion(): void {
     localStorage.removeItem('utilisateurCourant');
+    localStorage.removeItem('jwtToken');
     this._utilisateurCourant.set(null);
   }
 
@@ -306,7 +408,9 @@ export class AuthService {
    * Vérifie si le courriel existe déjà
    */
   courrielExiste(courriel: string): boolean {
-    return this.utilisateurs.some(u => u.courriel === courriel);
+    const emailRecherche = courriel.trim().toLowerCase();
+    const source = this.utilisateurs.length ? this.utilisateurs : this.lireUtilisateursDepuisStorage();
+    return source.some(u => u.courriel.trim().toLowerCase() === emailRecherche);
   }
 
   // Alias pour compatibilité
@@ -332,7 +436,7 @@ export class AuthService {
     this._utilisateurCourant.update(utilisateur => {
       if (utilisateur && !utilisateur.favoris.includes(idRestaurant)) {
         const maj = { ...utilisateur, favoris: [...utilisateur.favoris, idRestaurant] };
-        localStorage.setItem('utilisateurCourant', JSON.stringify(maj));
+        this.synchroniserUtilisateurDansStorage(maj);
         return maj;
       }
       return utilisateur;
@@ -354,7 +458,7 @@ export class AuthService {
     this._utilisateurCourant.update(utilisateur => {
       if (utilisateur) {
         const maj = { ...utilisateur, favoris: utilisateur.favoris.filter(id => id !== idRestaurant) };
-        localStorage.setItem('utilisateurCourant', JSON.stringify(maj));
+        this.synchroniserUtilisateurDansStorage(maj);
         return maj;
       }
       return utilisateur;
@@ -398,7 +502,7 @@ export class AuthService {
           telephone: donnees.telephone !== undefined ? donnees.telephone : utilisateur.telephone,
           adresse: donnees.adresse !== undefined ? donnees.adresse : utilisateur.adresse
         };
-        localStorage.setItem('utilisateurCourant', JSON.stringify(maj));
+        this.synchroniserUtilisateurDansStorage(maj);
         return maj;
       }
       return utilisateur;
@@ -408,5 +512,26 @@ export class AuthService {
   // Alias pour compatibilité
   updateProfile(data: Partial<Utilisateur>): void {
     this.mettreAJourProfil(data);
+  }
+
+  private persistUtilisateurCourant(utilisateur: Utilisateur): void {
+    this.synchroniserUtilisateurDansStorage(utilisateur);
+    this._utilisateurCourant.set(utilisateur);
+  }
+
+  private synchroniserUtilisateurDansStorage(utilisateur: Utilisateur): void {
+    localStorage.setItem('utilisateurCourant', JSON.stringify(utilisateur));
+
+    const liste = this.lireUtilisateursDepuisStorage();
+    const index = liste.findIndex(u => u.id === utilisateur.id || u.courriel === utilisateur.courriel);
+
+    if (index === -1) {
+      liste.push(utilisateur);
+    } else {
+      liste[index] = { ...liste[index], ...utilisateur };
+    }
+
+    this.ecrireUtilisateursDansStorage(liste);
+    this.utilisateurs = liste;
   }
 }

@@ -14,36 +14,29 @@ import { Commande } from '../models';
 export class OrderService {
   // Liste des commandes
   private commandes: Commande[] = [];
+  private readonly BUSINESS_URL = 'http://localhost:8082/api/commandes';
+  private readonly mockUrl = 'assets/mock/orders.json';
   private readonly storageKey = 'INF1013_orders';
+  private readonly storageVersionKey = 'INF1013_orders_version';
+  private readonly storageVersion = '2';
+  private charge = false;
   private commandesSubject = new BehaviorSubject<Commande[]>([]);
   commandes$ = this.commandesSubject.asObservable();
   // Alias pour compatibilité
   orders$ = this.commandes$;
 
   constructor(private http: HttpClient) {
-    this.chargerCommandes();
-  }
-
-  /**
-   * Charge les commandes depuis le fichier mock
-   */
-  private chargerCommandes(): void {
-    // 1) Priorité au localStorage
+    // Purge automatique des anciennes données mock si version obsolète
+    if (localStorage.getItem(this.storageVersionKey) !== this.storageVersion) {
+      localStorage.removeItem(this.storageKey);
+      localStorage.setItem(this.storageVersionKey, this.storageVersion);
+    }
     const cache = this.lireDepuisStorage();
     if (cache.length) {
       this.commandes = cache;
+      this.charge = true;
       this.commandesSubject.next(this.commandes);
-      return;
     }
-
-    // 2) Sinon charger depuis JSON et persister
-    this.http.get<any[]>('assets/mock/orders.json').pipe(
-      catchError(() => of([]))
-    ).subscribe(orders => {
-      this.commandes = (orders ?? []).map(o => this.convertirCommande(o));
-      this.commandesSubject.next(this.commandes);
-      this.ecrireDansStorage(this.commandes);
-    });
   }
 
   /**
@@ -88,29 +81,16 @@ export class OrderService {
     return mapping[statut] || statut;
   }
 
-  /**
-   * Récupère toutes les commandes
-   */
   getCommandes(): Observable<Commande[]> {
-    if (this.commandes.length === 0) {
-      const cache = this.lireDepuisStorage();
-      if (cache.length) {
-        this.commandes = cache;
+    return this.http.get<Commande[]>(this.BUSINESS_URL).pipe(
+      tap(commandes => {
+        this.commandes = commandes ?? [];
+        this.charge = true;
         this.commandesSubject.next(this.commandes);
-        return of(this.commandes);
-      }
-
-      return this.http.get<any[]>('assets/mock/orders.json').pipe(
-        tap(orders => {
-          this.commandes = orders.map(o => this.convertirCommande(o));
-          this.commandesSubject.next(this.commandes);
-          this.ecrireDansStorage(this.commandes);
-        }),
-        map(() => this.commandes),
-        catchError(() => of([]))
-      );
-    }
-    return of(this.commandes);
+        this.ecrireDansStorage(this.commandes);
+      }),
+      catchError(() => this.chargerDepuisCacheEtMock())
+    );
   }
 
   // Alias pour compatibilité
@@ -123,8 +103,14 @@ export class OrderService {
    * @param idClient - ID du client
    */
   getCommandesParUtilisateur(idClient: number): Observable<Commande[]> {
-    return this.getCommandes().pipe(
-      map(commandes => commandes.filter(c => c.idClient === idClient))
+    return this.http.get<Commande[]>(this.BUSINESS_URL, { params: { idClient } as any }).pipe(
+      tap(commandes => {
+        this.commandes = commandes ?? [];
+        this.commandesSubject.next(this.commandes);
+      }),
+      catchError(() => this.getCommandes().pipe(
+        map(commandes => commandes.filter(c => c.idClient === idClient))
+      ))
     );
   }
 
@@ -138,8 +124,14 @@ export class OrderService {
    * @param idRestaurant - ID du restaurant
    */
   getCommandesParRestaurant(idRestaurant: number): Observable<Commande[]> {
-    return this.getCommandes().pipe(
-      map(commandes => commandes.filter(c => c.idRestaurant === idRestaurant))
+    return this.http.get<Commande[]>(this.BUSINESS_URL, { params: { idRestaurant } as any }).pipe(
+      tap(commandes => {
+        this.commandes = commandes ?? [];
+        this.commandesSubject.next(this.commandes);
+      }),
+      catchError(() => this.getCommandes().pipe(
+        map(commandes => commandes.filter(c => c.idRestaurant === idRestaurant))
+      ))
     );
   }
 
@@ -184,11 +176,21 @@ export class OrderService {
       livraisonEstimee: this.calculerLivraisonEstimee()
     };
 
-    this.commandes.push(nouvelleCommande);
-    this.commandesSubject.next([...this.commandes]);
-    this.ecrireDansStorage(this.commandes);
-    
-    return of(nouvelleCommande);
+    return this.http.post<Commande>(this.BUSINESS_URL, nouvelleCommande).pipe(
+      tap(created => {
+        this.commandes = [created, ...this.commandes.filter(c => c.id !== created.id)];
+        this.charge = true;
+        this.commandesSubject.next([...this.commandes]);
+        this.ecrireDansStorage(this.commandes);
+      }),
+      catchError(() => {
+        this.commandes.push(nouvelleCommande);
+        this.charge = true;
+        this.commandesSubject.next([...this.commandes]);
+        this.ecrireDansStorage(this.commandes);
+        return of(nouvelleCommande);
+      })
+    );
   }
 
   // Alias pour compatibilité
@@ -217,13 +219,60 @@ export class OrderService {
    * @param statut - Nouveau statut
    */
   mettreAJourStatut(idCommande: number, statut: Commande['statut']): Observable<Commande | undefined> {
-    const commande = this.commandes.find(c => c.id === idCommande);
-    if (commande) {
-      commande.statut = statut;
-      this.commandesSubject.next([...this.commandes]);
-      this.ecrireDansStorage(this.commandes);
+    return this.http.patch<Commande>(`${this.BUSINESS_URL}/${idCommande}/statut`, null, {
+      params: { statut } as any
+    }).pipe(
+      tap(updated => {
+        const idx = this.commandes.findIndex(c => c.id === updated.id);
+        if (idx !== -1) {
+          this.commandes[idx] = updated;
+        } else {
+          this.commandes.unshift(updated);
+        }
+        this.commandesSubject.next([...this.commandes]);
+        this.ecrireDansStorage(this.commandes);
+      }),
+      map(updated => updated as Commande | undefined),
+      catchError(() => {
+        const commande = this.commandes.find(c => c.id === idCommande);
+        if (commande) {
+          commande.statut = statut;
+          this.commandesSubject.next([...this.commandes]);
+          this.ecrireDansStorage(this.commandes);
+        }
+        return of(commande);
+      })
+    );
+  }
+
+  private chargerDepuisCacheEtMock(): Observable<Commande[]> {
+    if (this.charge) {
+      return of(this.commandes);
     }
-    return of(commande);
+
+    const cache = this.lireDepuisStorage();
+    if (cache.length) {
+      this.commandes = cache;
+      this.charge = true;
+      this.commandesSubject.next(this.commandes);
+      return of(this.commandes);
+    }
+
+    return this.http.get<any[]>(this.mockUrl).pipe(
+      map(orders => (orders ?? []).map(o => this.convertirCommande(o))),
+      tap(commandes => {
+        this.commandes = commandes;
+        this.charge = true;
+        this.commandesSubject.next(this.commandes);
+        this.ecrireDansStorage(this.commandes);
+      }),
+      catchError(() => {
+        this.commandes = [];
+        this.charge = true;
+        this.commandesSubject.next(this.commandes);
+        return of([]);
+      })
+    );
   }
 
   private lireDepuisStorage(): Commande[] {

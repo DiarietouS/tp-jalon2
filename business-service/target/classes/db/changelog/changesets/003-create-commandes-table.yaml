@@ -1,0 +1,78 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-commandes-table
+      author: copilot
+      changes:
+        - createTable:
+            tableName: commandes
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: id_client
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_restaurant
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nom_restaurant
+                  type: VARCHAR(255)
+              - column:
+                  name: articles_json
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: statut
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sous_total
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+              - column:
+                  name: frais_livraison
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+              - column:
+                  name: adresse_livraison
+                  type: VARCHAR(500)
+              - column:
+                  name: telephone
+                  type: VARCHAR(50)
+              - column:
+                  name: cree_le
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: livraison_estimee
+                  type: VARCHAR(100)
+        - createIndex:
+            tableName: commandes
+            indexName: idx_commandes_client
+            columns:
+              - column:
+                  name: id_client
+        - createIndex:
+            tableName: commandes
+            indexName: idx_commandes_restaurant
+            columns:
+              - column:
+                  name: id_restaurant

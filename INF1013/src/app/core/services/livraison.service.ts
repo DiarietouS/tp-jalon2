@@ -8,6 +8,7 @@ import { LivraisonModel, StatutLivraison } from '../models/livraison';
   providedIn: 'root',
 })
 export class LivraisonService {
+  private readonly businessUrl = 'http://localhost:8082/api/livraisons';
 
   private readonly jsonUrl = 'assets/mock/livraisons.json';
 
@@ -23,18 +24,25 @@ export class LivraisonService {
       return of(this.livraisons);
     }
 
-    // sinon charger depuis JSON
-    return this.http.get<any[]>(this.jsonUrl).pipe(
-      map((data) => (data ?? []).map(l => this.convertirLivraison(l))),
+    // sinon charger depuis backend, puis fallback JSON mock
+    return this.http.get<LivraisonModel[]>(this.businessUrl).pipe(
+      map((data) => (data ?? []).map(l => this.normaliserLivraisonBackend(l))),
       tap((data) => {
         this.livraisons = data;
         this.charge = true;
       }),
-      catchError(() => {
-        this.livraisons = [];
-        this.charge = true;
-        return of([]);
-      })
+      catchError(() => this.http.get<any[]>(this.jsonUrl).pipe(
+        map((data) => (data ?? []).map(l => this.convertirLivraison(l))),
+        tap((data) => {
+          this.livraisons = data;
+          this.charge = true;
+        }),
+        catchError(() => {
+          this.livraisons = [];
+          this.charge = true;
+          return of([]);
+        })
+      ))
     );
   }
 
@@ -76,15 +84,37 @@ export class LivraisonService {
   }
 
   mettreAJourStatut(id: number, statut: StatutLivraison): Observable<LivraisonModel[]> {
-    return this.chargerLivraisons().pipe(
-      map((liste) => {
-        this.livraisons = liste.map(l =>
-          l.id === id ? { ...l, statut } : l
-        );
-
+    return this.http.patch<LivraisonModel>(`${this.businessUrl}/${id}/statut`, null, {
+      params: { statut } as any
+    }).pipe(
+      map((updated) => {
+        this.livraisons = this.livraisons.map(l => l.id === updated.id ? updated : l);
         return this.livraisons;
-      })
+      }),
+      catchError(() => this.chargerLivraisons().pipe(
+        map((liste) => {
+          this.livraisons = liste.map(l => l.id === id ? { ...l, statut } : l);
+          return this.livraisons;
+        })
+      ))
     );
+  }
+
+  private normaliserLivraisonBackend(l: any): LivraisonModel {
+    return {
+      id: l.id,
+      client: l.client,
+      adresse: l.adresse,
+      telephone: l.telephone,
+      statut: this.convertirStatut(l.statut),
+      creeLe: l.creeLe,
+      lignes: (l.lignes || []).map((ligne: any) => ({
+        numPlat: ligne.numPlat,
+        libelle: ligne.libelle,
+        quantite: ligne.quantite,
+        prixUnitaire: ligne.prixUnitaire
+      }))
+    };
   }
 
   // Alias pour compatibilité

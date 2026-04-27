@@ -25,22 +25,38 @@ export class App implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.mettreAJourRoleActuel(this.routeur.url);
 
     this.routeur.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
-      if (event.url.startsWith('/restaurateur')) {
-        this.roleActuel = 'restaurateur';
-      } else if (event.url.startsWith('/livreur')) {
-        this.roleActuel = 'livreur';
-      } else {
-        this.roleActuel = 'client';
-      }
+      this.mettreAJourRoleActuel(event.urlAfterRedirects || event.url);
     });
   }
 
 
   onRecherche(terme: string): void {
     this.rechercheService.setTermeRecherche(terme);
+  }
+
+  private mettreAJourRoleActuel(url: string): void {
+    const utilisateur = this.serviceAuth.getUtilisateurCourant();
+
+    if (url.startsWith('/restaurateur')) {
+      this.roleActuel = 'restaurateur';
+      return;
+    }
+
+    if (url.startsWith('/livreur')) {
+      this.roleActuel = 'livreur';
+      return;
+    }
+
+    if (utilisateur?.role) {
+      this.roleActuel = utilisateur.role;
+      return;
+    }
+
+    this.roleActuel = 'client';
   }
 }

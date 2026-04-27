@@ -1,5 +1,4 @@
-// Classe principale de l'application Spring Boot
-// Ceci est le microservice d'authentification sur le port 8081
+package com.restaurants.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

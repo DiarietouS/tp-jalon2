@@ -31,48 +31,67 @@
           </span>
           <span>
             <mat-icon>schedule</mat-icon>
-            {{ restaurant.tempsLivraison }} min
+            {{ formatTempsLivraison(restaurant.tempsLivraison) }}
           </span>
           <span>
             <mat-icon>delivery_dining</mat-icon>
             {{ restaurant.fraisLivraison }} $
           </span>
         </div>
+        <p class="menu-summary">
+          {{ plats.length }} plats • {{ nombrePlatsDisponibles }} disponibles
+        </p>
         <p class="address">{{ restaurant.adresse }}</p>
       </div>
     </div>
 
 
     <div class="menu-section">
-      @for (categorie of categories; track categorie) {
-        <h2 class="category-title">{{ categorie }}</h2>
-
-        <div class="dishes-list">
-          @for (plat of getPlatsParCategorie(categorie); track plat.id) {
-            <div class="dish-card" [class.unavailable]="!plat.disponible">
-              <div class="dish-info">
-                <h3>{{ plat.nom }}</h3>
-                <p class="description">{{ plat.description }}</p>
-
-                <span class="price">{{ plat.prix | prix }}</span>
-              </div>
-
-              <div class="dish-image">
-                <img [src]="plat.imageUrl" [alt]="plat.nom">
-              </div>
-
-              @if (plat.disponible) {
-                <button mat-mini-fab color="primary"
-                        class="add-btn"
-                        (click)="ajouterAuPanier(plat)">
-                  <mat-icon>add</mat-icon>
-                </button>
-              } @else {
-                <span class="unavailable-badge">Indisponible</span>
-              }
-            </div>
-          }
+      @if (plats.length === 0) {
+        <div class="empty-menu">
+          <mat-icon>restaurant_menu</mat-icon>
+          <p>Aucun plat n'est disponible pour ce restaurant pour le moment.</p>
         </div>
+      } @else {
+        @for (categorie of categories; track categorie) {
+          <h2 class="category-title">{{ categorie }}</h2>
+
+          <div class="dishes-list">
+            @for (plat of getPlatsParCategorie(categorie); track plat.id) {
+              <div class="dish-card" [class.unavailable]="!plat.disponible">
+                <div class="dish-info">
+                  <h3>{{ plat.nom }}</h3>
+                  <p class="description">{{ plat.description }}</p>
+
+                  <div class="dish-meta">
+                    <span class="dish-category">{{ plat.categorie }}</span>
+                    @if (plat.disponible) {
+                      <span class="dish-status available">Disponible</span>
+                    } @else {
+                      <span class="dish-status unavailable">Indisponible</span>
+                    }
+                  </div>
+
+                  <span class="price">{{ plat.prix | prix }}</span>
+                </div>
+
+                <div class="dish-image">
+                  <img [src]="plat.imageUrl" [alt]="plat.nom">
+                </div>
+
+                @if (plat.disponible) {
+                  <button mat-mini-fab color="primary"
+                          class="add-btn"
+                          (click)="ajouterAuPanier(plat)">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                } @else {
+                  <span class="unavailable-badge">Indisponible</span>
+                }
+              </div>
+            }
+          </div>
+        }
       }
     </div>
 

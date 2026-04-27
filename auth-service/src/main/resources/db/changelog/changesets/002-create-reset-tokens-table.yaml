@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-reset-tokens-table
+      author: tp-jalon1
+      changes:
+        - createTable:
+            tableName: jetons_reinitialisation
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: courriel
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: jeton
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: expire_le
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: utilise
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+      rollback:
+        - dropTable:
+            tableName: jetons_reinitialisation

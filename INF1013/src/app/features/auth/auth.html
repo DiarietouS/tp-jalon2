@@ -1,6 +1,4 @@
 
-  //Formulaires d'authentification
-
 <div class="auth-container">
   <mat-card class="auth-card">
     <mat-card-header>
@@ -12,7 +10,6 @@
     <mat-card-content>
       <mat-tab-group [selectedIndex]="ongletActif()" (selectedIndexChange)="ongletActif.set($event)" animationDuration="200ms">
 
-        // Connexion
         <mat-tab label="Connexion">
           <form novalidate (ngSubmit)="seConnecter()" class="auth-form">
 
@@ -64,20 +61,13 @@
             }
           </form>
 
-          // Infos pour tester
-          <div class="test-info">
-            <p><strong>Comptes de test :</strong></p>
-            <p>Client : client&#64;test.com / test123</p>
-            <p>Restaurateur : resto&#64;bellaitalia.ca / test123</p>
-          </div>
+
         </mat-tab>
 
-        //Inscription
         <mat-tab label="Inscription">
 
           <form [formGroup]="formulaireInscription" (ngSubmit)="sInscrire()" class="auth-form">
 
-            // Donnees personnels avec validation
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Prénom *</mat-label>
               <input matInput
@@ -114,7 +104,6 @@
               }
             </mat-form-field>
 
-            //Téléphone
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Téléphone</mat-label>
               <input matInput
@@ -124,7 +113,6 @@
               <mat-icon matSuffix>phone</mat-icon>
             </mat-form-field>
 
-            // adresse
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Adresse de livraison</mat-label>
               <input matInput
@@ -134,7 +122,6 @@
               <mat-icon matSuffix>location_on</mat-icon>
             </mat-form-field>
 
-            //Type de compte
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Type de compte</mat-label>
               <mat-select formControlName="role">
@@ -145,7 +132,6 @@
               <mat-icon matSuffix>badge</mat-icon>
             </mat-form-field>
 
-            // Mot de passe avec validation
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Mot de passe *</mat-label>
               <input matInput
@@ -160,7 +146,6 @@
               }
             </mat-form-field>
 
-            // Confirmation mot de passe
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Confirmer le mot de passe *</mat-label>
               <input matInput
@@ -174,7 +159,6 @@
               }
             </mat-form-field>
 
-            //Bouton inscription
             @if (enChargementInscription()) {
               <button mat-raised-button
                       color="primary"
@@ -195,6 +179,97 @@
             }
           </form>
         </mat-tab>
+
+        <mat-tab label="Mot de passe oublié">
+          <div class="auth-form">
+
+            @if (etapeRecuperation() === 'demande') {
+
+              <p class="recovery-info">
+                Entrez votre adresse courriel pour recevoir un token de réinitialisation.
+              </p>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Adresse courriel</mat-label>
+                <input matInput type="email" placeholder="votre@email.com"
+                       [value]="courrielRecuperation()"
+                       (input)="courrielRecuperation.set($any($event.target).value)" />
+                <mat-icon matSuffix>email</mat-icon>
+              </mat-form-field>
+
+              @if (enChargementRecuveration()) {
+                <button mat-raised-button color="accent" class="full-width submit-btn" disabled>
+                  <mat-icon class="spin">sync</mat-icon>
+                  Envoi en cours...
+                </button>
+              } @else {
+                <button mat-raised-button color="accent" class="full-width submit-btn"
+                        (click)="demanderReinitialisationMotDePasse()">
+                  <mat-icon>lock_reset</mat-icon>
+                  Envoyer le token
+                </button>
+              }
+
+            } @else {
+
+              @if (jetonRecut()) {
+                <div class="token-dev-banner">
+                  <mat-icon>info</mat-icon>
+                  <div>
+                    <strong>Mode développement</strong> — token généré :
+                    <code>{{ jetonRecut() }}</code>
+                    <p class="token-note">En production, ce token serait envoyé par email.</p>
+                  </div>
+                </div>
+              }
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Token de réinitialisation</mat-label>
+                <input matInput type="text"
+                       [value]="jetonSaisi()"
+                       (input)="jetonSaisi.set($any($event.target).value)"
+                       placeholder="Collez votre token ici" />
+                <mat-icon matSuffix>vpn_key</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nouveau mot de passe</mat-label>
+                <input matInput type="password"
+                       [value]="nouveauMotDePasse()"
+                       (input)="nouveauMotDePasse.set($any($event.target).value)"
+                       placeholder="Min. 6 caractères" />
+                <mat-hint>Minimum 6 caractères</mat-hint>
+                <mat-icon matSuffix>lock</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Confirmer le nouveau mot de passe</mat-label>
+                <input matInput type="password"
+                       [value]="confirmNouveauMotDePasse()"
+                       (input)="confirmNouveauMotDePasse.set($any($event.target).value)" />
+                <mat-icon matSuffix>lock_outline</mat-icon>
+              </mat-form-field>
+
+              @if (enChargementRecuveration()) {
+                <button mat-raised-button color="primary" class="full-width submit-btn" disabled>
+                  <mat-icon class="spin">sync</mat-icon>
+                  Réinitialisation...
+                </button>
+              } @else {
+                <button mat-raised-button color="primary" class="full-width submit-btn"
+                        (click)="reinitialiserMotDePasse()">
+                  <mat-icon>check_circle</mat-icon>
+                  Réinitialiser mon mot de passe
+                </button>
+              }
+
+              <button mat-button class="full-width" (click)="etapeRecuperation.set('demande')">
+                ← Retour
+              </button>
+            }
+          </div>
+        </mat-tab>
+
       </mat-tab-group>
     </mat-card-content>
   </mat-card>

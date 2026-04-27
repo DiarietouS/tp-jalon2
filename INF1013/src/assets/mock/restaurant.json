@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "ownerId": 2,
+    "ownerId": 0,
     "nom": "Campiglia",
     "adresse": "3322 Rue Courval, Trois-Rivières",
     "localisationTexte": "Centre ville, près du parc",
@@ -16,7 +16,7 @@
   },
   {
     "id": 2,
-    "ownerId": 3,
+    "ownerId": 0,
     "nom": "Le petit food",
     "adresse": "1500 Boulevard des Forges, Trois-Rivières",
     "localisationTexte": "Route universitaire",
@@ -31,7 +31,7 @@
   },
   {
     "id": 3,
-    "ownerId": 4,
+    "ownerId": 0,
     "nom": "Sushi Bar",
     "adresse": "84 Rue des Ursulines, Trois-Rivières",
     "localisationTexte": "Vieux Trois-Rivières",

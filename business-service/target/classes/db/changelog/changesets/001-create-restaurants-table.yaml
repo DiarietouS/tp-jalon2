@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-restaurants-table
+      author: tp-jalon1
+      changes:
+        - createTable:
+            tableName: restaurants
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: id_proprietaire
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: adresse
+                  type: VARCHAR(500)
+              - column:
+                  name: localisation_texte
+                  type: VARCHAR(500)
+              - column:
+                  name: telephone
+                  type: VARCHAR(20)
+              - column:
+                  name: courriel
+                  type: VARCHAR(255)
+              - column:
+                  name: image_url
+                  type: VARCHAR(1000)
+              - column:
+                  name: type_cuisine
+                  type: VARCHAR(100)
+              - column:
+                  name: note
+                  type: DOUBLE PRECISION
+                  defaultValueNumeric: 0.0
+              - column:
+                  name: temps_livraison
+                  type: VARCHAR(50)
+              - column:
+                  name: frais_livraison
+                  type: DOUBLE PRECISION
+                  defaultValueNumeric: 0.0
+              - column:
+                  name: commande_minimum
+                  type: DOUBLE PRECISION
+                  defaultValueNumeric: 0.0
+      rollback:
+        - dropTable:
+            tableName: restaurants

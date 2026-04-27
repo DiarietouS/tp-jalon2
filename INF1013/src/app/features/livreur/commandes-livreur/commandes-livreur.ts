@@ -9,8 +9,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 
-import { Commande } from '../../../core/models';
-import { OrderService } from '../../../core/services/order.service';
+import { LivraisonModel, StatutLivraison } from '../../../core/models/livraison';
+import { LivraisonService } from '../../../core/services/livraison.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
 
@@ -32,43 +32,46 @@ import { NotificationService } from '../../../core/services/notification.service
 })
 export class CommandesLivreur implements OnInit {
   enChargement = signal<boolean>(true);
-  commandes = signal<Commande[]>([]);
+  livraisons = signal<LivraisonModel[]>([]);
 
   constructor(
-    private readonly orderService: OrderService,
+    private readonly livraisonService: LivraisonService,
     private readonly notification: NotificationService
   ) {}
 
   ngOnInit(): void {
-    this.orderService.getCommandes().subscribe((liste) => {
-      // Un livreur voit les commandes prêtes ou en livraison
+    this.livraisonService.chargerLivraisons().subscribe((liste) => {
+      // Un livreur voit les livraisons en attente et en cours
       const filtre = (liste ?? []).filter(
-        (c) => c.statut === 'prete' || c.statut === 'enLivraison'
+        (l) => l.statut === 'EN_ATTENTE' || l.statut === 'EN_COURS'
       );
-      this.commandes.set(filtre);
+      this.livraisons.set(filtre);
       this.enChargement.set(false);
     });
   }
 
 
-  fermerCommande(commande: Commande): void {
-    this.orderService.mettreAJourStatut(commande.id, 'livree').subscribe(() => {
-      this.notification.afficherSucces(`Commande #${commande.id} fermée (livrée).`);
-      // Retirer de la liste "à livrer"
-      this.commandes.update((liste) => liste.filter((c) => c.id !== commande.id));
+  fermerCommande(livraison: LivraisonModel): void {
+    this.livraisonService.mettreAJourStatut(livraison.id, 'LIVREE').subscribe(() => {
+      this.notification.afficherSucces(`Livraison #${livraison.id} fermée.`);
+      this.livraisons.update((liste) => liste.filter((l) => l.id !== livraison.id));
     });
   }
 
-  etiquetteStatut(statut: Commande['statut']): string {
+  etiquetteStatut(statut: StatutLivraison): string {
     switch (statut) {
-      case 'prete':
-        return 'Prête';
-      case 'enLivraison':
+      case 'EN_ATTENTE':
+        return 'En attente';
+      case 'EN_COURS':
         return 'En livraison';
-      case 'livree':
+      case 'LIVREE':
         return 'Livrée';
       default:
         return statut;
     }
+  }
+
+  totalLivraison(livraison: LivraisonModel): number {
+    return (livraison.lignes || []).reduce((somme, ligne) => somme + (ligne.prixUnitaire * ligne.quantite), 0);
   }
 }

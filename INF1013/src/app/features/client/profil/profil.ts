@@ -119,6 +119,8 @@ export class Profil implements OnInit {
 
   get libelleRole(): string {
     if (!this.utilisateur) return '';
-    return this.utilisateur.role === 'client' ? 'Client' : 'Restaurateur';
+    if (this.utilisateur.role === 'client') return 'Client';
+    if (this.utilisateur.role === 'livreur') return 'Livreur';
+    return 'Restaurateur';
   }
 }

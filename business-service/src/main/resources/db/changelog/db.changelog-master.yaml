@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changesets/001-create-restaurants-table.yaml
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changesets/002-create-plats-table.yaml
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changesets/003-create-commandes-table.yaml
+      relativeToChangelogFile: false

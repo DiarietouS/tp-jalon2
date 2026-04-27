@@ -67,6 +67,14 @@
           </mat-card-content>
         </mat-card>
 
+        <!-- Avertissement si pas encore de restaurant -->
+        @if (!enChargement() && !restaurant) {
+          <div class="message-erreur">
+            <mat-icon>warning</mat-icon>
+            Créez d'abord votre restaurant dans l'onglet "Mon restaurant" avant d'ajouter des plats.
+          </div>
+        }
+
         <!-- COURS INF1013: Signal lu avec () dans le template -->
         <!-- Message d'erreur -->
         @if (messageErreur(); as erreur) {
@@ -116,7 +124,7 @@
         }
 
         <!-- Message si aucun plat -->
-        @if (!enChargement() && plats.length === 0) {
+        @if (!enChargement() && restaurant && plats.length === 0) {
           <div class="message-vide">
             <mat-icon>restaurant_menu</mat-icon>
             <p>Aucun plat dans votre menu. Ajoutez votre premier plat!</p>
@@ -278,10 +286,79 @@
         }
 
         @if (!enChargement() && !restaurant) {
-          <div class="message-vide">
-            <mat-icon>store</mat-icon>
-            <p>Aucun restaurant trouvé.</p>
-          </div>
+          <mat-card class="carte-restaurant">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>add_business</mat-icon> Créer mon restaurant
+              </mat-card-title>
+              <mat-card-subtitle>Configurez les informations de votre restaurant</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <form [formGroup]="formulaireRestaurant" class="formulaire-restaurant">
+                <mat-form-field appearance="outline">
+                  <mat-label>Nom du restaurant</mat-label>
+                  <input matInput formControlName="nom">
+                  @if (formulaireRestaurant.get('nom')?.hasError('required') && formulaireRestaurant.get('nom')?.touched) {
+                    <mat-error>Le nom est requis</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Adresse</mat-label>
+                  <input matInput formControlName="adresse">
+                  @if (formulaireRestaurant.get('adresse')?.hasError('required') && formulaireRestaurant.get('adresse')?.touched) {
+                    <mat-error>L'adresse est requise</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Téléphone</mat-label>
+                  <input matInput formControlName="telephone">
+                  @if (formulaireRestaurant.get('telephone')?.hasError('required') && formulaireRestaurant.get('telephone')?.touched) {
+                    <mat-error>Le téléphone est requis</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Courriel</mat-label>
+                  <input matInput formControlName="courriel" type="email">
+                  @if (formulaireRestaurant.get('courriel')?.hasError('required') && formulaireRestaurant.get('courriel')?.touched) {
+                    <mat-error>Le courriel est requis</mat-error>
+                  }
+                  @if (formulaireRestaurant.get('courriel')?.hasError('email')) {
+                    <mat-error>Format de courriel invalide</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Type de cuisine</mat-label>
+                  <input matInput formControlName="typeCuisine" placeholder="Ex: Italien, Japonais...">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>URL de l'image</mat-label>
+                  <input matInput formControlName="imageUrl" placeholder="https://...">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Temps de livraison (min)</mat-label>
+                  <input matInput type="number" formControlName="tempsLivraison">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Frais de livraison ($)</mat-label>
+                  <input matInput type="number" formControlName="fraisLivraison">
+                </mat-form-field>
+              </form>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="creerRestaurant()">
+                <mat-icon>save</mat-icon> Créer mon restaurant
+              </button>
+            </mat-card-actions>
+          </mat-card>
         }
       </div>
     </mat-tab>
